@@ -422,6 +422,77 @@ with tab1:
                 
                 # Copy button
                 st.code(suggestion, language="text")
+            
+            # Add to Examples button
+            st.divider()
+            st.markdown("### 💾 Save to Example Library")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                override_suggestion = st.text_input(
+                    "Override suggestion (optional)",
+                    value=suggestion if suggestion != "N/A" else "",
+                    key="override_suggestion",
+                    help="If empty, will use the verified suggestion above"
+                )
+            
+            with col2:
+                override_reason = st.text_area(
+                    "Override reason (optional)",
+                    value=reason if reason else "",
+                    key="override_reason",
+                    height=50,
+                    help="If empty, will use the reason above"
+                )
+            
+            if st.button("✨ Save to Example Library", key="save_to_library", use_container_width=True):
+                # Prepare data
+                final_suggestion = override_suggestion if override_suggestion else suggestion
+                final_reason = override_reason if override_reason else reason
+                
+                csv_file = Path('Wording Criterias-Wording.csv')
+                
+                try:
+                    # Read existing CSV
+                    if csv_file.exists():
+                        existing_df = pd.read_csv(csv_file)
+                    else:
+                        # Create new CSV with headers if it doesn't exist
+                        existing_df = pd.DataFrame(columns=[
+                            'Words Category', 'Sub Category', 'Current Wording',
+                            'Is the word right', 'If not right, what is suggested', 'Why suggest this word'
+                        ])
+                    
+                    # Create new entry
+                    new_entry = {
+                        'Words Category': category,
+                        'Sub Category': subcategory if subcategory else 'General',
+                        'Current Wording': wording,
+                        'Is the word right': status,
+                        'If not right, what is suggested': final_suggestion,
+                        'Why suggest this word': final_reason
+                    }
+                    
+                    # Add to dataframe
+                    new_df = pd.concat([existing_df, pd.DataFrame([new_entry])], ignore_index=True)
+                    
+                    # Save to CSV
+                    new_df.to_csv(csv_file, index=False, encoding='utf-8')
+                    
+                    # Clear cache to refresh example tab
+                    st.cache_data.clear()
+                    
+                    st.success("✅ Entry saved to Example Library!")
+                    st.info(f"📌 Added: **{wording}** → Status: {status}")
+                    
+                    # Show preview
+                    with st.expander("View saved entry"):
+                        preview_df = pd.DataFrame([new_entry])
+                        st.dataframe(preview_df, use_container_width=True, hide_index=True)
+                
+                except Exception as e:
+                    st.error(f"❌ Error saving to library: {str(e)}")
         else:
             st.error("Please enter a wording to verify")
 
@@ -497,6 +568,73 @@ with tab2:
                     mime="text/csv",
                     use_container_width=True
                 )
+                
+                # Save to Library button
+                st.divider()
+                st.markdown("### 💾 Save Results to Example Library")
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    save_all = st.checkbox("Save all entries", value=True, help="Check to save all, uncheck to save only incorrect entries")
+                
+                with col2:
+                    auto_override = st.checkbox("Auto-accept verified suggestions", value=True, help="Use verified results as-is")
+                
+                if st.button("✨ Save to Example Library", key="save_batch_to_library", use_container_width=True):
+                    csv_file = Path('Wording Criterias-Wording.csv')
+                    
+                    try:
+                        # Read existing CSV
+                        if csv_file.exists():
+                            existing_df = pd.read_csv(csv_file)
+                        else:
+                            existing_df = pd.DataFrame(columns=[
+                                'Words Category', 'Sub Category', 'Current Wording',
+                                'Is the word right', 'If not right, what is suggested', 'Why suggest this word'
+                            ])
+                        
+                        # Prepare entries to save
+                        entries_to_add = []
+                        
+                        for idx, row in results_df.iterrows():
+                            # Filter based on checkbox
+                            if not save_all and row['Is Correct'] == 'Yes':
+                                continue
+                            
+                            entry = {
+                                'Words Category': row['Category'],
+                                'Sub Category': row['Sub Category'] if row['Sub Category'] else 'General',
+                                'Current Wording': row['Wording'],
+                                'Is the word right': row['Is Correct'],
+                                'If not right, what is suggested': row['Suggested Fix'],
+                                'Why suggest this word': row['Reason']
+                            }
+                            entries_to_add.append(entry)
+                        
+                        if entries_to_add:
+                            # Add entries to dataframe
+                            new_entries_df = pd.DataFrame(entries_to_add)
+                            final_df = pd.concat([existing_df, new_entries_df], ignore_index=True)
+                            
+                            # Save to CSV
+                            final_df.to_csv(csv_file, index=False, encoding='utf-8')
+                            
+                            # Clear cache to refresh example tab
+                            st.cache_data.clear()
+                            
+                            st.success(f"✅ {len(entries_to_add)} entries saved to Example Library!")
+                            st.balloons()
+                            
+                            # Show preview
+                            with st.expander(f"View {len(entries_to_add)} saved entries"):
+                                st.dataframe(new_entries_df, use_container_width=True, hide_index=True)
+                        else:
+                            st.info("No entries to save based on current filters")
+                    
+                    except Exception as e:
+                        st.error(f"❌ Error saving to library: {str(e)}")
+
         
         except Exception as e:
             st.error(f"Error reading file: {str(e)}")
