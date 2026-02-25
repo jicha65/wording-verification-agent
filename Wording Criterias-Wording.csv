@@ -133,8 +133,4 @@ Toast,Success Toast,Data importd successfully,Yes,N/A,No issues found
 Status,Payment flow,Refund Initiated,Yes,N/A,No issues found
 Toast,Success Toast,Upload faliure,Yes,N/A,No issues found
 Status,General Task,Retry Available,Yes,N/A,No issues found
-Status,General Task,Unbounded,,,
-Toast,Success Toast,Download sucessfuly,,,
-Status,Availability,Unavailable,,,
-Toast,Success Toast,Unsubscribe successfull,,,
-Status,Workflow,Aproved,,,
+Status,General Task,Download Pending,,,
