@@ -320,6 +320,22 @@ def save_rules(rules):
 
 # Load rules at startup
 rules = load_rules()
+
+# Load CSV examples
+@st.cache_data
+def load_csv_examples():
+    """Load wording examples from CSV file"""
+    csv_file = Path('Wording Criterias-Wording.csv')
+    if csv_file.exists():
+        try:
+            df = pd.read_csv(csv_file)
+            return df
+        except:
+            return None
+    return None
+
+csv_examples = load_csv_examples()
+
 st.title("✍️ Wording Verification Agent")
 st.markdown("**Automatically verify and improve your wording for clarity, consistency, and cultural appropriateness.**")
 st.markdown("---")
@@ -347,7 +363,7 @@ with st.sidebar:
     """)
 
 # Main interface
-tab1, tab2, tab3, tab4 = st.tabs(["Single Entry", "Batch Upload", "Results", "Rules Management"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Single Entry", "Batch Upload", "Results", "Rules Management", "Example Wordings"])
 
 # TAB 1: Single Entry
 with tab1:
@@ -743,6 +759,172 @@ with tab4:
         in the verification logic by the development team. Use the "Rules & Guide" documentation 
         to learn how to implement custom rules in the code.
         """)
+
+# TAB 5: Example Wordings
+with tab5:
+    st.header("📚 Wording Library & Examples")
+    st.markdown("Browse verified wording examples from your organization")
+    
+    if csv_examples is not None and not csv_examples.empty:
+        # Filters
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            categories = ['All'] + sorted(csv_examples['Words Category'].unique().tolist())
+            selected_category = st.selectbox("Filter by Category", categories, key="filter_category")
+        
+        with col2:
+            sub_categories = ['All']
+            if selected_category != 'All':
+                filtered_by_cat = csv_examples[csv_examples['Words Category'] == selected_category]
+                sub_categories += sorted(filtered_by_cat['Sub Category'].unique().tolist())
+            else:
+                sub_categories += sorted(csv_examples['Sub Category'].unique().tolist())
+            
+            selected_subcategory = st.selectbox("Filter by Sub Category", sub_categories, key="filter_subcategory")
+        
+        with col3:
+            status_filter = st.selectbox("Filter by Status", ['All', 'Yes (Correct)', 'No (Needs Fix)'], key="filter_status")
+        
+        st.divider()
+        
+        # Apply filters
+        filtered_df = csv_examples.copy()
+        
+        if selected_category != 'All':
+            filtered_df = filtered_df[filtered_df['Words Category'] == selected_category]
+        
+        if selected_subcategory != 'All':
+            filtered_df = filtered_df[filtered_df['Sub Category'] == selected_subcategory]
+        
+        if status_filter == 'Yes (Correct)':
+            filtered_df = filtered_df[filtered_df['Is the word right'] == 'Yes']
+        elif status_filter == 'No (Needs Fix)':
+            filtered_df = filtered_df[filtered_df['Is the word right'] == 'No']
+        
+        # Search
+        search_term = st.text_input("🔍 Search wording...", placeholder="Type to search in current wording and suggestions")
+        
+        if search_term:
+            filtered_df = filtered_df[
+                filtered_df['Current Wording'].str.contains(search_term, case=False, na=False) |
+                filtered_df['If not right, what is suggested'].str.contains(search_term, case=False, na=False)
+            ]
+        
+        st.markdown(f"**Found {len(filtered_df)} entries**")
+        
+        # Display options
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            view_style = st.radio("View Style", ["Detailed Cards", "Table"], horizontal=True)
+        
+        with col2:
+            sort_by = st.selectbox("Sort by", ["Category", "Status", "Alphabetical"])
+        
+        # Sort
+        if sort_by == "Category":
+            filtered_df = filtered_df.sort_values('Words Category')
+        elif sort_by == "Status":
+            filtered_df = filtered_df.sort_values('Is the word right', ascending=False)
+        elif sort_by == "Alphabetical":
+            filtered_df = filtered_df.sort_values('Current Wording')
+        
+        st.divider()
+        
+        # Display results
+        if view_style == "Detailed Cards":
+            for idx, row in filtered_df.iterrows():
+                status_icon = "✅" if row['Is the word right'] == 'Yes' else "⚠️"
+                
+                with st.expander(f"{status_icon} {row['Current Wording']} • {row['Words Category']} / {row['Sub Category']}", expanded=False):
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**Current Wording:**")
+                        st.code(row['Current Wording'], language="text")
+                        
+                        st.markdown("**Category:**")
+                        st.caption(f"{row['Words Category']} → {row['Sub Category']}")
+                    
+                    with col2:
+                        st.markdown("**Status:**")
+                        if row['Is the word right'] == 'Yes':
+                            st.success("✅ Correct", icon="✓")
+                        else:
+                            st.warning("⚠️ Needs Fix", icon="⚠")
+                        
+                        if row['Is the word right'] == 'No':
+                            st.markdown("**Suggested Correction:**")
+                            st.code(row['If not right, what is suggested'], language="text")
+                    
+                    st.markdown("**Why:**")
+                    st.info(row['Why suggest this word'])
+        
+        else:  # Table view
+            # Select columns to display
+            display_cols = {
+                'Words Category': 'Category',
+                'Sub Category': 'Sub Category',
+                'Current Wording': 'Current',
+                'Is the word right': 'Status',
+                'If not right, what is suggested': 'Suggestion',
+                'Why suggest this word': 'Reason'
+            }
+            
+            display_df = filtered_df[list(display_cols.keys())].copy()
+            display_df.columns = list(display_cols.values())
+            
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
+            
+            # Download option
+            csv = display_df.to_csv(index=False)
+            st.download_button(
+                label="📥 Download Filtered Results (CSV)",
+                data=csv,
+                file_name=f"wording_examples_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+        
+        # Statistics
+        st.divider()
+        st.markdown("### Statistics")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            total_entries = len(csv_examples)
+            st.metric("Total Entries", total_entries)
+        
+        with col2:
+            correct_entries = len(csv_examples[csv_examples['Is the word right'] == 'Yes'])
+            st.metric("Correct", correct_entries)
+        
+        with col3:
+            needs_fix = len(csv_examples[csv_examples['Is the word right'] == 'No'])
+            st.metric("Needs Fix", needs_fix)
+        
+        with col4:
+            accuracy = (correct_entries / total_entries * 100) if total_entries > 0 else 0
+            st.metric("Accuracy Rate", f"{accuracy:.1f}%")
+        
+        # Category breakdown
+        st.markdown("### Category Breakdown")
+        
+        category_counts = csv_examples['Words Category'].value_counts()
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.bar_chart(category_counts)
+        
+        with col2:
+            # Status by category
+            status_by_cat = csv_examples.groupby(['Words Category', 'Is the word right']).size().unstack(fill_value=0)
+            st.bar_chart(status_by_cat)
+    
+    else:
+        st.warning("❌ No CSV file found. Please ensure 'Wording Criterias-Wording.csv' is in the same directory as app.py")
 
 # Footer
 st.markdown("---")
