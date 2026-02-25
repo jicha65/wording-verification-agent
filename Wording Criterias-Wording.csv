@@ -134,4 +134,4 @@ Status,Payment flow,Refund Initiated,Yes,N/A,No issues found
 Toast,Success Toast,Upload faliure,Yes,N/A,No issues found
 Status,General Task,Retry Available,Yes,N/A,No issues found
 Status,General Task,Download Pending,Yes,N/A,No issues found
-Status,General Task,Unconfirmed Status,,,
+Status,General Task,Unconfirmed Status,Yes,N/A,No issues found
