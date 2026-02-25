@@ -1,0 +1,41 @@
+{
+  "toast_word_replacements": {
+    "success": "successfully",
+    "succeed": "successfully",
+    "succeeded": "successfully"
+  },
+  "category_rules": {
+    "Toast": {
+      "rules": ["use_successfully", "use_period_punctuation"],
+      "description": "Toast messages should use 'successfully' and end with period"
+    },
+    "Success Toast": {
+      "rules": ["use_successfully", "use_period_punctuation"],
+      "description": "Success toasts should use past participle + successfully, with period"
+    },
+    "Error Toast": {
+      "rules": ["use_period_punctuation"],
+      "description": "Error messages should end with period"
+    }
+  },
+  "custom_rules": {
+    "un_prefix_to_not": {
+      "name": "Use 'Not' instead of 'Un' prefix",
+      "description": "Replace 'Un' prefixes with 'Not' for consistency",
+      "applies_to": "All",
+      "examples": ["Unopened → Not Opened", "Unavailable → Not Available"]
+    },
+    "past_participle_successfully": {
+      "name": "Past Participle + Successfully",
+      "description": "Action verbs before 'Successfully' must be in -ed form",
+      "applies_to": "Success Toast",
+      "examples": ["Save Successfully → Saved Successfully", "Delete Successfully → Deleted Successfully"]
+    },
+    "period_not_exclamation": {
+      "name": "Use Period, Not Exclamation",
+      "description": "Toast messages should end with period (.) not exclamation (!)",
+      "applies_to": "Toast",
+      "examples": ["Saved Successfully! → Saved Successfully."]
+    }
+  }
+}

@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import csv
 import re
+import json
 from io import StringIO
 from datetime import datetime
+from pathlib import Path
 
 # Page configuration
 st.set_page_config(
@@ -247,7 +249,77 @@ class WordingVerifier:
 # Initialize verifier
 verifier = WordingVerifier()
 
-# Header
+# ===== RULES MANAGEMENT FUNCTIONS =====
+@st.cache_resource
+def load_rules():
+    """Load rules from rules.json"""
+    rules_file = Path('rules.json')
+    if rules_file.exists():
+        try:
+            with open(rules_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return get_default_rules()
+    return get_default_rules()
+
+def get_default_rules():
+    """Return default rules structure"""
+    return {
+        "toast_word_replacements": {
+            "success": "successfully",
+            "succeed": "successfully",
+            "succeeded": "successfully"
+        },
+        "category_rules": {
+            "Toast": {
+                "rules": ["use_successfully", "use_period_punctuation"],
+                "description": "Toast messages should use 'successfully' and end with period"
+            },
+            "Success Toast": {
+                "rules": ["use_successfully", "use_period_punctuation"],
+                "description": "Success toasts should use past participle + successfully, with period"
+            },
+            "Error Toast": {
+                "rules": ["use_period_punctuation"],
+                "description": "Error messages should end with period"
+            }
+        },
+        "custom_rules": {
+            "un_prefix_to_not": {
+                "name": "Use 'Not' instead of 'Un' prefix",
+                "description": "Replace 'Un' prefixes with 'Not' for consistency",
+                "applies_to": "All",
+                "examples": ["Unopened → Not Opened", "Unavailable → Not Available"]
+            },
+            "past_participle_successfully": {
+                "name": "Past Participle + Successfully",
+                "description": "Action verbs before 'Successfully' must be in -ed form",
+                "applies_to": "Success Toast",
+                "examples": ["Save Successfully → Saved Successfully", "Delete Successfully → Deleted Successfully"]
+            },
+            "period_not_exclamation": {
+                "name": "Use Period, Not Exclamation",
+                "description": "Toast messages should end with period (.) not exclamation (!)",
+                "applies_to": "Toast",
+                "examples": ["Saved Successfully! → Saved Successfully."]
+            }
+        }
+    }
+
+def save_rules(rules):
+    """Save rules to rules.json"""
+    try:
+        with open('rules.json', 'w', encoding='utf-8') as f:
+            json.dump(rules, f, indent=2, ensure_ascii=False)
+        st.success("✅ Rules saved successfully!")
+        st.cache_resource.clear()
+        return True
+    except Exception as e:
+        st.error(f"❌ Error saving rules: {e}")
+        return False
+
+# Load rules at startup
+rules = load_rules()
 st.title("✍️ Wording Verification Agent")
 st.markdown("**Automatically verify and improve your wording for clarity, consistency, and cultural appropriateness.**")
 st.markdown("---")
@@ -275,7 +347,7 @@ with st.sidebar:
     """)
 
 # Main interface
-tab1, tab2, tab3 = st.tabs(["Single Entry", "Batch Upload", "Results"])
+tab1, tab2, tab3, tab4 = st.tabs(["Single Entry", "Batch Upload", "Results", "Rules Management"])
 
 # TAB 1: Single Entry
 with tab1:
@@ -473,6 +545,204 @@ with tab3:
     
     **Need help?** Check the rules in the sidebar →
     """)
+
+# TAB 4: Rules Management
+with tab4:
+    st.header("⚙️ Rules Management")
+    st.markdown("View, manage, and add new verification rules")
+    
+    rules_tab1, rules_tab2, rules_tab3 = st.tabs(["Current Rules", "Add Word Replacement", "Add Custom Rule"])
+    
+    # TAB 4.1: View Current Rules
+    with rules_tab1:
+        st.subheader("📋 Active Rules")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### Word Replacements")
+            st.markdown("Words automatically replaced in toast messages:")
+            
+            replacements = rules.get('toast_word_replacements', {})
+            if replacements:
+                replacement_data = [
+                    {"Original": k, "Replace With": v} 
+                    for k, v in replacements.items()
+                ]
+                st.dataframe(
+                    pd.DataFrame(replacement_data),
+                    use_container_width=True,
+                    hide_index=True
+                )
+            else:
+                st.info("No word replacements configured")
+        
+        with col2:
+            st.markdown("### Category Rules")
+            st.markdown("Rules applied to specific message categories:")
+            
+            cat_rules = rules.get('category_rules', {})
+            if cat_rules:
+                for category, config in cat_rules.items():
+                    with st.expander(f"📁 {category}", expanded=False):
+                        st.write(f"**Description:** {config.get('description', 'N/A')}")
+                        rules_list = config.get('rules', [])
+                        st.write(f"**Applied Rules:** {', '.join(rules_list)}")
+            else:
+                st.info("No category rules configured")
+        
+        st.divider()
+        
+        st.markdown("### Custom Rules")
+        custom = rules.get('custom_rules', {})
+        
+        if custom:
+            for rule_id, rule_config in custom.items():
+                col1, col2 = st.columns([3, 1])
+                
+                with col1:
+                    with st.expander(f"✨ {rule_config.get('name', rule_id)}", expanded=False):
+                        st.write(f"**Description:** {rule_config.get('description', 'N/A')}")
+                        st.write(f"**Applies To:** {rule_config.get('applies_to', 'N/A')}")
+                        
+                        examples = rule_config.get('examples', [])
+                        if examples:
+                            st.write("**Examples:**")
+                            for example in examples:
+                                st.caption(f"• {example}")
+                
+                with col2:
+                    if st.button("🗑️", key=f"delete_{rule_id}", help="Delete this rule"):
+                        del rules['custom_rules'][rule_id]
+                        save_rules(rules)
+                        st.rerun()
+        else:
+            st.info("No custom rules added yet")
+    
+    # TAB 4.2: Add Word Replacement
+    with rules_tab2:
+        st.subheader("➕ Add Word Replacement Rule")
+        
+        st.markdown("""
+        Add new words that should be automatically replaced in toast messages.
+        
+        **Example:** If you always write "success" but want it to be "successfully", add this rule.
+        """)
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            original_word = st.text_input(
+                "Original Word",
+                placeholder="e.g., success",
+                key="new_original_word"
+            )
+        
+        with col2:
+            replacement_word = st.text_input(
+                "Replace With",
+                placeholder="e.g., successfully",
+                key="new_replacement_word"
+            )
+        
+        if st.button("➕ Add Replacement Rule", use_container_width=True, key="add_replacement"):
+            if original_word and replacement_word:
+                if 'toast_word_replacements' not in rules:
+                    rules['toast_word_replacements'] = {}
+                
+                rules['toast_word_replacements'][original_word.lower()] = replacement_word.lower()
+                
+                if save_rules(rules):
+                    st.balloons()
+                    st.rerun()
+            else:
+                st.error("Please fill in both fields")
+        
+        st.divider()
+        
+        st.markdown("**Current Word Replacements:**")
+        replacements = rules.get('toast_word_replacements', {})
+        if replacements:
+            for word, replacement in replacements.items():
+                col1, col2, col3 = st.columns([2, 2, 1])
+                with col1:
+                    st.text(word)
+                with col2:
+                    st.text("→ " + replacement)
+                with col3:
+                    if st.button("🗑️", key=f"delete_word_{word}", help="Delete"):
+                        del rules['toast_word_replacements'][word]
+                        save_rules(rules)
+                        st.rerun()
+    
+    # TAB 4.3: Add Custom Rule
+    with rules_tab3:
+        st.subheader("✨ Add Custom Rule")
+        
+        st.markdown("""
+        Create new custom verification rules for your organization.
+        """)
+        
+        rule_name = st.text_input(
+            "Rule Name",
+            placeholder="e.g., Use 'Please' in requests",
+            key="new_rule_name"
+        )
+        
+        rule_description = st.text_area(
+            "Rule Description",
+            placeholder="Explain what this rule checks for...",
+            height=80,
+            key="new_rule_description"
+        )
+        
+        rule_applies_to = st.selectbox(
+            "Applies To",
+            ["All", "Toast", "Success Toast", "Error Toast", "Label", "Status", "Message", "Custom"],
+            key="new_rule_applies_to"
+        )
+        
+        st.markdown("**Examples** (optional - separate with semicolon)")
+        rule_examples_text = st.text_area(
+            "Examples",
+            placeholder="Good example → Bad example; Another good → Another bad",
+            height=80,
+            key="new_rule_examples"
+        )
+        
+        if st.button("✨ Add Custom Rule", use_container_width=True, key="add_custom_rule"):
+            if rule_name and rule_description:
+                if 'custom_rules' not in rules:
+                    rules['custom_rules'] = {}
+                
+                # Generate rule ID from name
+                rule_id = rule_name.lower().replace(' ', '_')
+                
+                # Parse examples
+                examples = []
+                if rule_examples_text:
+                    examples = [ex.strip() for ex in rule_examples_text.split(';') if ex.strip()]
+                
+                rules['custom_rules'][rule_id] = {
+                    "name": rule_name,
+                    "description": rule_description,
+                    "applies_to": rule_applies_to,
+                    "examples": examples
+                }
+                
+                if save_rules(rules):
+                    st.balloons()
+                    st.rerun()
+            else:
+                st.error("Please fill in at least Rule Name and Description")
+        
+        st.divider()
+        
+        st.info("""
+        💡 **Tip:** Custom rules are displayed in the "Current Rules" tab but need to be implemented 
+        in the verification logic by the development team. Use the "Rules & Guide" documentation 
+        to learn how to implement custom rules in the code.
+        """)
 
 # Footer
 st.markdown("---")
