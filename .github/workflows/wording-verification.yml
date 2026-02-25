@@ -1,0 +1,85 @@
+name: Automatic Wording Verification
+
+on:
+  push:
+    paths:
+      - 'Wording Criterias-Wording.csv'
+      - 'Wording Criterias-Wording_VALIDATED.csv'
+  pull_request:
+    paths:
+      - 'Wording Criterias-Wording.csv'
+      - 'Wording Criterias-Wording_VALIDATED.csv'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  verify-wording:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Run wording verification
+        run: |
+          python wording-verification.py Wording\ Criterias-Wording.csv
+      
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const csv = fs.readFileSync('Wording Criterias-Wording.csv', 'utf8');
+            const lines = csv.split('\n');
+            
+            let issuesFound = 0;
+            for (let i = 1; i < lines.length; i++) {
+              if (lines[i].includes(',No,')) {
+                issuesFound++;
+              }
+            }
+            
+            const comment = `## 🔍 Wording Verification Report
+            
+            **Issues Found:** ${issuesFound}
+            
+            ✅ Verification completed automatically. All new entries have been analyzed for:
+            - Grammatical accuracy
+            - Consistency with existing terminology
+            - Clarity and cultural appropriateness
+            - Common typos and misspellings
+            
+            Check the updated CSV file for detailed suggestions.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Commit verified changes
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "Wording Verification Bot"
+          git config user.email "bot@github.com"
+          git add Wording\ Criterias-Wording.csv
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-verify wording entries" && git push)
+      
+      - name: Summary
+        run: |
+          echo "## ✅ Wording Verification Complete"
+          echo ""
+          echo "All entries have been validated for:"
+          echo "- Grammar and syntax correctness"
+          echo "- Consistency with terminology standards"
+          echo "- Clarity for international audiences"
+          echo "- Culturally appropriate phrasing"
