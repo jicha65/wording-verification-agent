@@ -988,9 +988,9 @@ with tab5:
                     with col2:
                         st.markdown("**Status:**")
                         if row['Is the word right'] == 'Yes':
-                            st.success("✅ Correct", icon="✓")
+                            st.success("✅ Correct")
                         else:
-                            st.warning("⚠️ Needs Fix", icon="⚠")
+                            st.warning("⚠️ Needs Fix")
                         
                         if row['Is the word right'] == 'No':
                             st.markdown("**Suggested Correction:**")
