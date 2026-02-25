@@ -128,3 +128,8 @@ Toast,Success Toast,The menu has been released successfully. Please wait for the
 Status,General Task,Pending Reviw,No,Pending Review,Typo: 'Reviw' should be 'Review'
 Toast,Success Toast,Configuration updated succesfully,No,Configuration Updated Successfully,Typo: 'succesfully' should be 'successfully'. Also use past participle 'Updated Successfully'
 Status,Dispatch Flow,Syncronization Complete,No,Synchronization Completed,Typo: 'Syncronization' should be 'Synchronization'. Use consistent 'Completed' form
+Status,General Task,Unconfirmed,Yes,N/A,No issues found
+Toast,Success Toast,Data importd successfully,Yes,N/A,No issues found
+Status,Payment flow,Refund Initiated,Yes,N/A,No issues found
+Toast,Success Toast,Upload faliure,Yes,N/A,No issues found
+Status,General Task,Retry Available,Yes,N/A,No issues found
