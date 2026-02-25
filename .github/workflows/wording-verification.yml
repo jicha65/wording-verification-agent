@@ -11,6 +11,10 @@ on:
       - 'Wording Criterias-Wording_VALIDATED.csv'
   workflow_dispatch: # Allow manual trigger
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   verify-wording:
     runs-on: ubuntu-latest
@@ -69,10 +73,13 @@ jobs:
       - name: Commit verified changes
         if: github.event_name == 'push'
         run: |
-          git config user.name "Wording Verification Bot"
-          git config user.email "bot@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Wording\ Criterias-Wording.csv
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-verify wording entries" && git push)
+          if ! git diff --quiet --cached; then
+            git commit -m "chore: auto-verify wording entries"
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+          fi
       
       - name: Summary
         run: |
