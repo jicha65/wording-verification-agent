@@ -23,6 +23,42 @@ class WordingVerifier:
             'ongoing': r'(ing|izing|ating)$',  # Executing, Processing, etc.
             'completed': r'(d|ed|ated|ed)$',  # Completed, Released, etc.
         }
+        
+        # ===== CONFIGURABLE RULES SECTION =====
+        # Easy to add new rules here without changing verify logic
+        
+        # Rule 1: Toast message word replacements
+        # If sub_category contains "Toast", replace these words with "successfully"
+        self.toast_word_replacements = {
+            'success': 'successfully',
+            'succeed': 'successfully',
+            'succeeded': 'successfully',
+        }
+        
+        # Rule 2: Toast punctuation rules
+        # Toast messages should end with "." not "!"
+        self.toast_punctuation_rule = {
+            'should_end_with': '.',
+            'replace_exclamation': True,  # Convert ! to .
+        }
+        
+        # Rule 3: Category-specific rules
+        # Define rules that apply to specific categories/sub_categories
+        self.category_rules = {
+            'Toast': {
+                'rules': ['use_successfully', 'use_period_punctuation'],
+                'description': 'Toast messages should use "successfully" and end with period'
+            },
+            'Success Toast': {
+                'rules': ['use_successfully', 'use_period_punctuation'],
+                'description': 'Success toasts should use past participle + successfully, with period'
+            },
+            'Error Toast': {
+                'rules': ['use_period_punctuation'],
+                'description': 'Error messages should end with period'
+            }
+        }
+        # ===== END RULES SECTION =====
     
     def check_spelling(self, word):
         """Check for common typos and misspellings"""
@@ -102,6 +138,57 @@ class WordingVerifier:
         
         return issues
     
+    def apply_toast_word_replacements(self, text, sub_category):
+        """Replace common words with 'successfully' in toast messages"""
+        issues = []
+        
+        # Check if this is a toast message
+        if 'toast' in sub_category.lower():
+            for old_word, replacement in self.toast_word_replacements.items():
+                # Look for the word as a whole word (not part of another word)
+                pattern = r'\b' + old_word + r'\b'
+                if re.search(pattern, text, re.IGNORECASE):
+                    # Replace it
+                    corrected = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+                    issues.append(('rule', corrected, f'Toast: Use "{replacement}" instead of "{old_word}"'))
+        
+        return issues
+    
+    def apply_toast_punctuation_rules(self, text, sub_category):
+        """Apply punctuation rules for toast messages"""
+        issues = []
+        
+        # Check if this is a toast message
+        if 'toast' in sub_category.lower():
+            # Rule: Toast should end with period, not exclamation mark
+            if text.endswith('!'):
+                corrected = text[:-1] + '.'
+                issues.append(('rule', corrected, 'Toast: Should end with period (.) not exclamation mark (!)'))
+            elif not text.endswith('.') and not text.endswith('!'):
+                # If doesn't end with punctuation, add period
+                corrected = text + '.'
+                issues.append(('rule', corrected, 'Toast: Should end with period (.)'))
+        
+        return issues
+    
+    def apply_category_rules(self, text, category, sub_category):
+        """Apply rules based on category/sub_category"""
+        issues = []
+        
+        # Check against category_rules
+        for rule_category, rule_config in self.category_rules.items():
+            # Match by sub_category or category
+            if rule_category.lower() in sub_category.lower() or rule_category.lower() in category.lower():
+                for rule_name in rule_config['rules']:
+                    if rule_name == 'use_successfully':
+                        toast_issues = self.apply_toast_word_replacements(text, sub_category)
+                        issues.extend(toast_issues)
+                    elif rule_name == 'use_period_punctuation':
+                        punct_issues = self.apply_toast_punctuation_rules(text, sub_category)
+                        issues.extend(punct_issues)
+        
+        return issues
+    
     def verify_entry(self, category, sub_category, wording):
         """Main verification function for a single entry"""
         
@@ -143,12 +230,22 @@ class WordingVerifier:
                     suggestions.append(fix)
                 reasons.append(reason)
         
+        # NEW: Apply configurable category rules
+        rule_issues = self.apply_category_rules(wording, category, sub_category)
+        if rule_issues:
+            is_correct = False
+            for issue_type, fix, reason in rule_issues:
+                if fix:
+                    suggestions.append(fix)
+                reasons.append(reason)
+        
         # Format results
         is_right = 'Yes' if is_correct else 'No'
         suggested_fix = suggestions[0] if suggestions else 'N/A'
         why_suggest = ' | '.join(set(reasons)) if reasons else 'No issues found'
         
         return is_right, suggested_fix, why_suggest
+    
     
     def process_csv(self, csv_path):
         """Process CSV file and fill validation columns"""

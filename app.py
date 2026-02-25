@@ -65,6 +65,42 @@ class WordingVerifier:
             'peding': 'pending',
             'reviw': 'review',
         }
+        
+        # ===== CONFIGURABLE RULES SECTION =====
+        # Easy to add new rules here without changing verify logic
+        
+        # Rule 1: Toast message word replacements
+        # If sub_category contains "Toast", replace these words with "successfully"
+        self.toast_word_replacements = {
+            'success': 'successfully',
+            'succeed': 'successfully',
+            'succeeded': 'successfully',
+        }
+        
+        # Rule 2: Toast punctuation rules
+        # Toast messages should end with "." not "!"
+        self.toast_punctuation_rule = {
+            'should_end_with': '.',
+            'replace_exclamation': True,  # Convert ! to .
+        }
+        
+        # Rule 3: Category-specific rules
+        # Define rules that apply to specific categories/sub_categories
+        self.category_rules = {
+            'Toast': {
+                'rules': ['use_successfully', 'use_period_punctuation'],
+                'description': 'Toast messages should use "successfully" and end with period'
+            },
+            'Success Toast': {
+                'rules': ['use_successfully', 'use_period_punctuation'],
+                'description': 'Success toasts should use past participle + successfully, with period'
+            },
+            'Error Toast': {
+                'rules': ['use_period_punctuation'],
+                'description': 'Error messages should end with period'
+            }
+        }
+        # ===== END RULES SECTION =====
     
     def check_spelling(self, word):
         """Check for common typos"""
@@ -74,9 +110,46 @@ class WordingVerifier:
                 return True, correction
         return False, None
     
-    def check_grammar(self, text):
+    def apply_toast_word_replacements(self, text, sub_category):
+        """Replace common words with 'successfully' in toast messages"""
+        issues = []
+        
+        # Check if this is a toast message
+        if 'toast' in sub_category.lower():
+            for old_word, replacement in self.toast_word_replacements.items():
+                # Look for the word as a whole word (not part of another word)
+                pattern = r'\b' + old_word + r'\b'
+                if re.search(pattern, text, re.IGNORECASE):
+                    # Replace it
+                    corrected = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+                    issues.append(f'Toast: Use "{replacement}" instead of "{old_word}"')
+                    return replacement, issues
+        
+        return text, []
+    
+    def apply_toast_punctuation_rules(self, text, sub_category):
+        """Apply punctuation rules for toast messages"""
+        issues = []
+        
+        # Check if this is a toast message
+        if 'toast' in sub_category.lower():
+            # Rule: Toast should end with period, not exclamation mark
+            if text.endswith('!'):
+                corrected = text[:-1] + '.'
+                issues.append('Toast: Should end with period (.) not exclamation mark (!)')
+                return corrected, issues
+            elif not text.endswith('.') and not text.endswith('!'):
+                # If doesn't end with punctuation, add period
+                corrected = text + '.'
+                issues.append('Toast: Should end with period (.)')
+                return corrected, issues
+        
+        return text, []
+    
+    def check_grammar(self, text, sub_category=''):
         """Check for grammar issues"""
         issues = []
+        suggestion = None
         
         # Check for "Successed"
         if re.search(r'\bSuccessed\b', text):
@@ -126,6 +199,7 @@ class WordingVerifier:
         is_correct = True
         suggestions = []
         reasons = []
+        current_text = wording
         
         # Check spelling
         has_typo, typo_fix = self.check_spelling(wording)
@@ -135,7 +209,7 @@ class WordingVerifier:
             reasons.append('Typo detected')
         
         # Check grammar
-        grammar_issues = self.check_grammar(wording)
+        grammar_issues = self.check_grammar(wording, subcategory)
         if grammar_issues:
             is_correct = False
             for issue in grammar_issues:
@@ -148,11 +222,27 @@ class WordingVerifier:
             for issue in consistency_issues:
                 reasons.append(issue)
         
+        # Apply category rules - Toast word replacements
+        corrected_text, toast_word_issues = self.apply_toast_word_replacements(wording, subcategory)
+        if toast_word_issues:
+            is_correct = False
+            suggestions.append(corrected_text)
+            reasons.extend(toast_word_issues)
+            current_text = corrected_text
+        
+        # Apply category rules - Toast punctuation
+        corrected_text, punct_issues = self.apply_toast_punctuation_rules(current_text, subcategory)
+        if punct_issues:
+            is_correct = False
+            suggestions.append(corrected_text)
+            reasons.extend(punct_issues)
+        
         status = 'Yes' if is_correct else 'No'
         suggestion = suggestions[0] if suggestions else 'N/A'
         why = ' | '.join(set(reasons)) if reasons else 'No issues found'
         
         return status, suggestion, why
+
 
 # Initialize verifier
 verifier = WordingVerifier()
