@@ -36,9 +36,9 @@ class WordingVerifier:
         }
         
         # Rule 2: Toast punctuation rules
-        # Toast messages should end with "." not "!"
+        # Toast messages should end without "." or "!"
         self.toast_punctuation_rule = {
-            'should_end_with': '.',
+            'should_end_with': '',
             'replace_exclamation': True,  # Convert ! to .
         }
         
