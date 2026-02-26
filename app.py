@@ -6,6 +6,7 @@ import json
 from io import StringIO
 from datetime import datetime
 from pathlib import Path
+from intelligent_verifier import IntelligentWordingVerifier
 
 # Page configuration
 st.set_page_config(
@@ -246,8 +247,18 @@ class WordingVerifier:
         return status, suggestion, why
 
 
-# Initialize verifier
-verifier = WordingVerifier()
+# Initialize verifiers
+rules_verifier = WordingVerifier()
+
+# Get API key from Streamlit secrets or environment
+api_key = None
+try:
+    api_key = st.secrets.get("anthropic_api_key")
+except:
+    pass
+
+# Initialize intelligent verifier
+intelligent_verifier = IntelligentWordingVerifier(rules_verifier, api_key)
 
 # ===== RULES MANAGEMENT FUNCTIONS =====
 @st.cache_resource
@@ -361,6 +372,55 @@ with st.sidebar:
     4. Use **past participles** (Saved, Deleted, Updated)
     5. Fix common **typos**
     """)
+    
+    # AI Settings
+    st.divider()
+    st.header("🤖 AI Settings")
+    
+    with st.expander("Configure Claude AI", expanded=False):
+        st.markdown("""
+        Enable Claude AI for **intelligent semantic analysis** beyond rule-based checks.
+        
+        **Features:**
+        - Semantic understanding
+        - Tone analysis
+        - Cultural appropriateness
+        - Context-aware suggestions
+        """)
+        
+        api_key_input = st.text_input(
+            "Anthropic API Key",
+            type="password",
+            placeholder="Enter your Claude API key",
+            key="api_key_input",
+            help="Get your key from https://console.anthropic.com"
+        )
+        
+        if api_key_input:
+            # Update the intelligent verifier with new API key
+            if api_key_input != api_key:
+                intelligent_verifier.api_key = api_key_input
+                intelligent_verifier.client = None
+                try:
+                    from anthropic import Anthropic
+                    intelligent_verifier.client = Anthropic(api_key=api_key_input)
+                    intelligent_verifier.use_ai = True
+                    st.success("✅ Claude API connected!")
+                except:
+                    st.error("❌ Invalid API key")
+                    intelligent_verifier.use_ai = False
+        
+        if intelligent_verifier.use_ai:
+            st.success("🤖 AI Mode: **ACTIVE**", icon="✨")
+        else:
+            st.info("🚫 AI Mode: **Inactive** - Using rules only", icon="ℹ️")
+        
+        # Cost info
+        st.caption("""
+        💰 **Cost:** ~$0.003 per verification (very affordable)
+        🔒 **Privacy:** Sent to Anthropic API
+        ⚡ **Speed:** 1-2 seconds per verification
+        """)
 
 # Main interface
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Single Entry", "Batch Upload", "Results", "Rules Management", "Example Wordings"])
@@ -394,34 +454,75 @@ with tab1:
     
     if st.button("🔍 Verify", key="verify_single", use_container_width=True):
         if wording:
-            status, suggestion, reason = verifier.verify(category, subcategory, wording)
+            # Use intelligent verification (rules + optional AI)
+            result = intelligent_verifier.verify_intelligent(
+                category, 
+                subcategory, 
+                wording,
+                use_ai=intelligent_verifier.use_ai
+            )
             
             st.markdown("### Results")
             
-            col1, col2, col3 = st.columns(3)
+            # Status indicator
+            col1, col2, col3, col4 = st.columns(4)
             
             with col1:
-                if status == "Yes":
+                if result['rule_status'] == "Yes":
                     st.markdown(f"<div class='success-box'>✅ <b>Status:</b> Correct</div>", unsafe_allow_html=True)
                 else:
                     st.markdown(f"<div class='warning-box'>⚠️ <b>Status:</b> Needs Fix</div>", unsafe_allow_html=True)
             
             with col2:
-                st.metric("Suggestion", suggestion if suggestion != "N/A" else "None needed")
+                st.metric("Suggestion", result['final_suggestion'] if result['final_suggestion'] != "N/A" else "None")
             
             with col3:
-                st.metric("Issues Found", "0" if status == "Yes" else "1+")
+                st.metric("Confidence", result['confidence'])
             
-            if reason:
-                st.markdown("#### Why?")
-                st.info(reason)
+            with col4:
+                if result['ai_used']:
+                    st.success("🤖 AI Mode")
+                else:
+                    st.info("📋 Rules Mode")
             
-            if status == "No" and suggestion != "N/A":
-                st.markdown(f"#### Recommended Fix:")
-                st.success(f"**{suggestion}**")
-                
-                # Copy button
-                st.code(suggestion, language="text")
+            # Detailed analysis
+            st.divider()
+            st.markdown("#### 📊 Analysis")
+            
+            # Create tabs for detailed view
+            analysis_col1, analysis_col2 = st.columns(2)
+            
+            with analysis_col1:
+                st.markdown("**Rules-Based Check:**")
+                with st.container():
+                    st.caption(f"Status: {result['rule_status']}")
+                    if result['rule_suggestion'] != "N/A":
+                        st.code(result['rule_suggestion'], language="text")
+                    if result['rule_reason']:
+                        st.caption(f"Reason: {result['rule_reason']}")
+            
+            with analysis_col2:
+                if result['ai_used']:
+                    st.markdown("**AI Analysis:**")
+                    with st.container():
+                        if result['ai_suggestion']:
+                            st.code(result['ai_suggestion'], language="text")
+                        if result['semantic_issues']:
+                            st.caption("Issues found:")
+                            for issue in result['semantic_issues']:
+                                st.caption(f"  • {issue}")
+                        if result['ai_reason']:
+                            st.caption(f"Reason: {result['ai_reason']}")
+                else:
+                    st.markdown("**AI Mode:**")
+                    st.info("💡 Add Claude API key in sidebar settings to enable AI analysis")
+            
+            # Final recommendation
+            if result['final_suggestion'] != "N/A" and result['rule_status'] == "No":
+                st.divider()
+                st.markdown("#### ✨ Final Recommendation:")
+                st.success(f"**{result['final_suggestion']}**")
+                st.caption(result['final_reason'])
             
             # Add to Examples button
             st.divider()
@@ -432,7 +533,7 @@ with tab1:
             with col1:
                 override_suggestion = st.text_input(
                     "Override suggestion (optional)",
-                    value=suggestion if suggestion != "N/A" else "",
+                    value=result['final_suggestion'] if result['final_suggestion'] != "N/A" else "",
                     key="override_suggestion",
                     help="If empty, will use the verified suggestion above"
                 )
@@ -440,7 +541,7 @@ with tab1:
             with col2:
                 override_reason = st.text_area(
                     "Override reason (optional)",
-                    value=reason if reason else "",
+                    value=result['final_reason'] if result['final_reason'] else "",
                     key="override_reason",
                     height=50,
                     help="If empty, will use the reason above"
@@ -448,8 +549,9 @@ with tab1:
             
             if st.button("✨ Save to Example Library", key="save_to_library", use_container_width=True):
                 # Prepare data
-                final_suggestion = override_suggestion if override_suggestion else suggestion
-                final_reason = override_reason if override_reason else reason
+                final_suggestion = override_suggestion if override_suggestion else result['final_suggestion']
+                final_reason = override_reason if override_reason else result['final_reason']
+                final_status = result['rule_status']
                 
                 csv_file = Path('Wording Criterias-Wording.csv')
                 
@@ -469,7 +571,7 @@ with tab1:
                         'Words Category': category,
                         'Sub Category': subcategory if subcategory else 'General',
                         'Current Wording': wording,
-                        'Is the word right': status,
+                        'Is the word right': final_status,
                         'If not right, what is suggested': final_suggestion,
                         'Why suggest this word': final_reason
                     }
@@ -484,7 +586,7 @@ with tab1:
                     st.cache_data.clear()
                     
                     st.success("✅ Entry saved to Example Library!")
-                    st.info(f"📌 Added: **{wording}** → Status: {status}")
+                    st.info(f"📌Added: **{wording}** → Status: {final_status}")
                     
                     # Show preview
                     with st.expander("View saved entry"):
@@ -525,15 +627,21 @@ with tab2:
                     subcategory = row.get('Sub Category', '') or row.get('Sub_Category', '')
                     wording = row.get('Current Wording', '') or row.get('Wording', '')
                     
-                    status, suggestion, reason = verifier.verify(category, subcategory, wording)
+                    # Use intelligent verification
+                    result = intelligent_verifier.verify_intelligent(
+                        category, subcategory, wording, 
+                        use_ai=intelligent_verifier.use_ai
+                    )
                     
                     results.append({
                         'Category': category,
                         'Sub Category': subcategory,
                         'Wording': wording,
-                        'Is Correct': status,
-                        'Suggested Fix': suggestion,
-                        'Reason': reason
+                        'Is Correct': result['rule_status'],
+                        'Suggested Fix': result['final_suggestion'],
+                        'Reason': result['final_reason'],
+                        'AI Used': result['ai_used'],
+                        'Confidence': result['confidence']
                     })
                     
                     progress = (idx + 1) / total
@@ -546,7 +654,7 @@ with tab2:
                 st.dataframe(results_df, use_container_width=True)
                 
                 # Statistics
-                col1, col2, col3 = st.columns(3)
+                col1, col2, col3, col4 = st.columns(4)
                 with col1:
                     correct_count = len(results_df[results_df['Is Correct'] == 'Yes'])
                     st.metric("Correct", correct_count)
@@ -558,6 +666,10 @@ with tab2:
                 with col3:
                     accuracy = (correct_count / len(results_df) * 100) if len(results_df) > 0 else 0
                     st.metric("Accuracy", f"{accuracy:.0f}%")
+                
+                with col4:
+                    ai_count = len(results_df[results_df['AI Used'] == True])
+                    st.metric("AI Analyzed", ai_count)
                 
                 # Download button
                 csv = results_df.to_csv(index=False)
