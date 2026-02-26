@@ -1,36 +1,64 @@
 #!/usr/bin/env python3
 """
 Intelligent Wording Verifier - Hybrid AI + Rules Engine
-Combines rule-based verification with Claude AI for semantic understanding
+Supports: Claude API (global), Google Gemini (global), Local Models (Ollama, China-friendly)
 """
 
 import json
 from pathlib import Path
-from anthropic import Anthropic
 
 class IntelligentWordingVerifier:
-    """Hybrid verifier combining rules + Claude AI"""
+    """Hybrid verifier combining rules + AI"""
     
-    def __init__(self, rules_verifier=None, api_key=None):
+    def __init__(self, rules_verifier=None, ai_provider=None, api_key=None, model_name=None):
         """
         Initialize intelligent verifier
         
         Args:
             rules_verifier: WordingVerifier instance for rule-based checks
-            api_key: Anthropic API key (can be None for rules-only mode)
+            ai_provider: 'claude', 'gemini', 'ollama', or None
+            api_key: API key (for Claude/Gemini)
+            model_name: Model name for Ollama (default: 'mistral')
         """
         self.rules_verifier = rules_verifier
+        self.ai_provider = ai_provider
         self.api_key = api_key
+        self.model_name = model_name or 'mistral'
         self.client = None
         self.use_ai = False
         
-        if api_key:
-            try:
-                self.client = Anthropic(api_key=api_key)
+        self._initialize_ai()
+    
+    def _initialize_ai(self):
+        """Initialize AI client based on provider"""
+        if not self.ai_provider:
+            return
+        
+        try:
+            if self.ai_provider == 'claude':
+                from anthropic import Anthropic
+                self.client = Anthropic(api_key=self.api_key)
                 self.use_ai = True
-            except Exception as e:
-                print(f"⚠️ Warning: Could not initialize Claude API: {e}")
-                self.use_ai = False
+            
+            elif self.ai_provider == 'gemini':
+                import google.generativeai as genai
+                genai.configure(api_key=self.api_key)
+                self.client = genai.GenerativeModel('gemini-1.5-flash')
+                self.use_ai = True
+            
+            elif self.ai_provider == 'ollama':
+                # Don't initialize here - import fresh in verify method
+                # Just mark as available
+                self.use_ai = True
+                print(f"✅ Ollama mode enabled (model: {self.model_name})")
+        
+        except ImportError as e:
+            print(f"⚠️ Library not installed: {e}")
+            self.use_ai = False
+        except Exception as e:
+            print(f"⚠️ AI initialization error: {e}")
+            self.use_ai = False
+    
     
     def load_csv_examples(self, csv_path='Wording Criterias-Wording.csv'):
         """Load verified examples for context"""
@@ -143,14 +171,32 @@ class IntelligentWordingVerifier:
     
     def _get_ai_verification(self, category, subcategory, wording, 
                             rule_status, rule_suggestion, rule_reason):
-        """Get Claude AI verification"""
+        """Get AI verification from configured provider"""
         
         try:
-            # Load examples for context
+            if self.ai_provider == 'claude':
+                return self._get_claude_verification(category, subcategory, wording, 
+                                                     rule_status, rule_suggestion, rule_reason)
+            elif self.ai_provider == 'gemini':
+                return self._get_gemini_verification(category, subcategory, wording,
+                                                     rule_status, rule_suggestion, rule_reason)
+            elif self.ai_provider == 'ollama':
+                return self._get_ollama_verification(category, subcategory, wording,
+                                                     rule_status, rule_suggestion, rule_reason)
+            else:
+                return {'suggestion': None, 'reason': 'No AI provider configured', 'issues': []}
+        
+        except Exception as e:
+            print(f"⚠️ AI verification error: {e}")
+            return {'suggestion': None, 'reason': f'AI error: {str(e)[:50]}', 'issues': []}
+    
+    def _get_claude_verification(self, category, subcategory, wording, 
+                                 rule_status, rule_suggestion, rule_reason):
+        """Get verification from Claude API"""
+        try:
             csv_df = self.load_csv_examples()
             examples_context = self._get_similar_examples(wording, category, csv_df)
             
-            # Build context
             context = f"""You are an expert wording verification specialist. Your role is to verify and improve wording for:
 - Clarity and conciseness
 - Consistency with organizational standards
@@ -161,89 +207,165 @@ class IntelligentWordingVerifier:
 Current organizational rules:
 1. Use "successfully" (adverb) not "successful" (adjective)
 2. Use "Not" prefix instead of "Un" prefix
-3. Action verbs before "successfully" should be in past participle form (e.g., "Saved Successfully")
+3. Action verbs before "successfully" should be in past participle form
 4. Toast messages should end with period (.) not exclamation (!)
 
 {examples_context}"""
             
-            # Create prompt
-            prompt = f"""Verify this wording for the {category} / {subcategory} category:
+            prompt = f"""Verify this wording for {category} / {subcategory}:
+Current: "{wording}"
+Rule status: {rule_status}
+Rule suggestion: {rule_suggestion}
 
-Current wording: "{wording}"
-
-Existing verification:
-- Rule engine status: {rule_status}
-- Rule suggestion: {rule_suggestion}
-- Rule reason: {rule_reason}
-
-Please analyze this wording and provide:
-1. Your assessment (Correct/Needs improvement)
-2. Semantic analysis (clarity, tone, professionalism)
-3. Cultural/audience considerations
-4. Better suggestion if needed
-5. Why your suggestion is better
-
-Respond ONLY as valid JSON in this format, no markdown:
+Provide as JSON:
 {{
-    "assessment": "Correct" or "Needs improvement",
+    "assessment": "Correct/Needs improvement",
     "suggestion": "Better wording or null",
-    "reason": "Why this suggestion is better",
-    "issues": ["clarity issue", "tone issue"],
-    "tone": "professional/friendly/formal",
+    "reason": "Why",
+    "issues": ["issue1"],
+    "tone": "professional/friendly",
     "audience_fit": "appropriate/needs adjustment"
 }}"""
             
-            # Call Claude
             message = self.client.messages.create(
                 model="claude-3-5-sonnet-20241022",
                 max_tokens=500,
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
+                messages=[{"role": "user", "content": prompt}],
                 system=context
             )
             
-            # Parse response
             response_text = message.content[0].text
-            
-            # Try to extract JSON
-            try:
-                # Handle markdown code blocks
-                if '```json' in response_text:
-                    response_text = response_text.split('```json')[1].split('```')[0]
-                elif '```' in response_text:
-                    response_text = response_text.split('```')[1].split('```')[0]
-                
-                ai_result = json.loads(response_text.strip())
-                return {
-                    'suggestion': ai_result.get('suggestion'),
-                    'reason': ai_result.get('reason'),
-                    'issues': ai_result.get('issues', []),
-                    'tone': ai_result.get('tone'),
-                    'audience_fit': ai_result.get('audience_fit')
-                }
-            except json.JSONDecodeError:
-                # Fallback: return raw response
-                return {
-                    'suggestion': None,
-                    'reason': response_text[:200],
-                    'issues': [],
-                    'tone': None,
-                    'audience_fit': None
-                }
+            return self._parse_json_response(response_text)
         
         except Exception as e:
-            print(f"⚠️ AI verification error: {e}")
+            return {'suggestion': None, 'reason': f'Claude error: {str(e)[:50]}', 'issues': []}
+    
+    def _get_gemini_verification(self, category, subcategory, wording,
+                                rule_status, rule_suggestion, rule_reason):
+        """Get verification from Google Gemini API"""
+        try:
+            csv_df = self.load_csv_examples()
+            examples_context = self._get_similar_examples(wording, category, csv_df)
+            
+            system_prompt = f"""Expert wording verification specialist.
+Rules: Use "successfully", "Not" not "Un", past participles, periods in toasts.
+{examples_context}"""
+            
+            prompt = f"""Verify: "{wording}" (Category: {category})
+Current status: {rule_status}
+Current suggestion: {rule_suggestion}
+
+Provide JSON: {{"assessment": "...", "suggestion": "...", "reason": "...", "issues": [...], "tone": "...", "audience_fit": "..."}}"""
+            
+            response = self.client.generate_content(
+                f"{system_prompt}\n\n{prompt}",
+                generation_config={'temperature': 0.3, 'max_output_tokens': 500}
+            )
+            
+            return self._parse_json_response(response.text)
+        
+        except Exception as e:
+            return {'suggestion': None, 'reason': f'Gemini error: {str(e)[:50]}', 'issues': []}
+    
+    def _get_ollama_verification(self, category, subcategory, wording,
+                                rule_status, rule_suggestion, rule_reason):
+        """Get verification from local Ollama model"""
+        try:
+            import ollama
+            
+            # Create simple prompt
+            prompt = f"""You are a wording expert. Verify this text for a {category} message:
+
+Text: "{wording}"
+Current rule status: {rule_status}
+Current suggestion: {rule_suggestion}
+
+RESPOND ONLY with valid JSON (no markdown, no explanation):
+{{"assessment": "Correct or Needs improvement", "suggestion": "better wording or null", "reason": "why", "issues": [], "tone": "professional", "audience_fit": "appropriate"}}"""
+            
+            # Call Ollama - response is a dict-like object
+            response = ollama.generate(
+                model=self.model_name,
+                prompt=prompt
+            )
+            
+            # Extract text from response
+            if isinstance(response, dict) and 'response' in response:
+                response_text = response['response']
+            else:
+                # Handle Pydantic model response
+                response_text = str(getattr(response, 'response', str(response)))
+            
+            return self._parse_json_response(response_text)
+        
+        except ImportError:
+            return {
+                'suggestion': None, 
+                'reason': 'ollama library not installed', 
+                'issues': []
+            }
+        except ConnectionError:
+            return {
+                'suggestion': None, 
+                'reason': 'Cannot connect to Ollama. Run: ollama serve', 
+                'issues': []
+            }
+        except KeyError as e:
+            # Handle NameError/'name' errors from response parsing
+            return {
+                'suggestion': None, 
+                'reason': f'Error parsing Ollama response: {str(e)}', 
+                'issues': []
+            }
+        except Exception as e:
+            return {
+                'suggestion': None, 
+                'reason': f'Ollama error: {str(e)[:80]}', 
+                'issues': []
+            }
+    
+    def _parse_json_response(self, response_text):
+        """Parse JSON response from AI"""
+        try:
+            # Remove markdown code blocks if present
+            if '```json' in response_text:
+                response_text = response_text.split('```json')[1].split('```')[0]
+            elif '```' in response_text:
+                response_text = response_text.split('```')[1].split('```')[0]
+            
+            # Clean up the text
+            response_text = response_text.strip()
+            
+            ai_result = json.loads(response_text)
+            
+            # Safely extract fields
+            return {
+                'suggestion': ai_result.get('suggestion'),
+                'reason': ai_result.get('reason', 'No additional feedback'),
+                'issues': ai_result.get('issues', []),
+                'tone': ai_result.get('tone'),
+                'audience_fit': ai_result.get('audience_fit')
+            }
+        except json.JSONDecodeError as e:
+            # If JSON fails, just return the text as reason
             return {
                 'suggestion': None,
-                'reason': f'AI unavailable: {str(e)[:50]}',
-                'issues': [],
-                'tone': None,
-                'audience_fit': None
+                'reason': response_text[:200] if response_text else 'No response',
+                'issues': []
             }
+        except (KeyError, TypeError) as e:
+            return {
+                'suggestion': None,
+                'reason': f'Parse error: {str(e)}',
+                'issues': []
+            }
+        except Exception as e:
+            return {
+                'suggestion': None,
+                'reason': f'Unexpected error: {str(e)[:100]}',
+                'issues': []
+            }
+    
 
 
 def create_intelligent_verifier(rules_verifier, api_key=None):

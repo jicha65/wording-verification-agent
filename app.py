@@ -250,15 +250,36 @@ class WordingVerifier:
 # Initialize verifiers
 rules_verifier = WordingVerifier()
 
-# Get API key from Streamlit secrets or environment
-api_key = None
-try:
-    api_key = st.secrets.get("anthropic_api_key")
-except:
-    pass
+# Initialize session state for AI settings
+if 'ai_provider' not in st.session_state:
+    st.session_state.ai_provider = None
+if 'ai_api_key' not in st.session_state:
+    st.session_state.ai_api_key = None
+if 'ai_model_name' not in st.session_state:
+    st.session_state.ai_model_name = 'mistral'
+if 'use_ai' not in st.session_state:
+    st.session_state.use_ai = False
 
-# Initialize intelligent verifier
-intelligent_verifier = IntelligentWordingVerifier(rules_verifier, api_key)
+# Initialize intelligent verifier with session state
+intelligent_verifier = IntelligentWordingVerifier(
+    rules_verifier,
+    ai_provider=st.session_state.ai_provider,
+    api_key=st.session_state.ai_api_key,
+    model_name=st.session_state.ai_model_name
+)
+
+# Function to sync verifier with session state
+def sync_verifier_with_session():
+    """Update verifier settings from session state"""
+    if st.session_state.ai_provider and st.session_state.ai_provider != intelligent_verifier.ai_provider:
+        # AI provider changed - reinitialize
+        intelligent_verifier.ai_provider = st.session_state.ai_provider
+        intelligent_verifier.api_key = st.session_state.ai_api_key
+        intelligent_verifier.model_name = st.session_state.ai_model_name
+        intelligent_verifier._initialize_ai()
+    
+    # Always sync the use_ai flag from session state
+    intelligent_verifier.use_ai = st.session_state.use_ai
 
 # ===== RULES MANAGEMENT FUNCTIONS =====
 @st.cache_resource
@@ -377,50 +398,179 @@ with st.sidebar:
     st.divider()
     st.header("🤖 AI Settings")
     
-    with st.expander("Configure Claude AI", expanded=False):
+    st.markdown("""
+    **Choose Your AI Provider:**
+    - 🖥️ **Ollama (Local)** - Works in China, completely offline
+    - 🤖 **Claude** - Global, semantic understanding
+    - 🔍 **Gemini** - Google API, if available in your region
+    - 📋 **Rules Only** - No AI, just pattern matching
+    """)
+    
+    with st.expander("🖥️ Local AI (Ollama - Best for China)", expanded=False):
         st.markdown("""
-        Enable Claude AI for **intelligent semantic analysis** beyond rule-based checks.
+        **Why Ollama?**
+        - ✅ Works in China (no internet needed)
+        - ✅ Completely free
+        - ✅ Offline & private
+        - ✅ Fast local processing
         
-        **Features:**
-        - Semantic understanding
-        - Tone analysis
-        - Cultural appropriateness
-        - Context-aware suggestions
+        **Setup:**
+        1. Download Ollama from https://ollama.ai
+        2. Run: `ollama pull mistral` or `ollama pull llama2`
+        3. Run: `ollama serve` (keeps running in background)
+        4. Come back here and refresh
+        """)
+        
+        # Check ollama status
+        try:
+            import ollama
+            st.info("✅ Ollama library installed")
+        except:
+            st.warning("⚠️ Run: `pip install ollama`")
+        
+        if st.button("🔄 Connect to Ollama", key="connect_ollama"):
+            try:
+                import ollama
+                
+                # Get list of models
+                response = ollama.list()
+                
+                # Handle different response formats
+                models = []
+                if hasattr(response, 'models'):
+                    # Pydantic model response
+                    models = [str(m.model).split(':')[0] if hasattr(m, 'model') else str(m).split(':')[0] for m in response.models]
+                elif isinstance(response, dict) and 'models' in response:
+                    # Dict response
+                    models = [m['name'].split(':')[0] if isinstance(m, dict) and 'name' in m else str(m).split(':')[0] for m in response.get('models', [])]
+                elif isinstance(response, list):
+                    # List response
+                    models = [str(m).split(':')[0] for m in response]
+                else:
+                    # Fallback
+                    models = []
+                
+                # Clean up model names
+                models = [m for m in models if m]
+                
+                if models:
+                    st.success(f"✅ Connected! Available models: {', '.join(models)}")
+                    
+                    # Save to session state
+                    st.session_state.ai_provider = 'ollama'
+                    st.session_state.ai_model_name = models[0]
+                    st.session_state.use_ai = True
+                    
+                    # Reinitialize with new settings
+                    intelligent_verifier.ai_provider = 'ollama'
+                    intelligent_verifier.model_name = models[0]
+                    intelligent_verifier._initialize_ai()
+                    
+                    st.success(f"🤖 Using {models[0]} for AI analysis")
+                    st.rerun()
+                else:
+                    st.error("❌ No models found. Run: `ollama pull mistral`")
+            except ImportError:
+                st.error("❌ Install ollama: `pip install ollama`")
+            except ConnectionError:
+                st.error("❌ Cannot connect to Ollama. Make sure `ollama serve` is running")
+            except Exception as e:
+                st.error(f"❌ Ollama error: {str(e)}")
+        
+        if intelligent_verifier.use_ai and intelligent_verifier.ai_provider == 'ollama':
+            st.success("🤖 Ollama Mode: **ACTIVE**")
+            st.caption(f"Using model: {intelligent_verifier.model_name}")
+    
+    with st.expander("🤖 Claude API (Global, Paid)", expanded=False):
+        st.markdown("""
+        **Requirements:**
+        - API key from https://console.anthropic.com
+        - Internet connection
+        - ~$0.003 per verification
+        
+        **Not available:** China (blocked by GFW)
+        Recommended: Use Ollama instead!
         """)
         
         api_key_input = st.text_input(
             "Anthropic API Key",
             type="password",
             placeholder="Enter your Claude API key",
-            key="api_key_input",
-            help="Get your key from https://console.anthropic.com"
+            key="api_key_claude"
         )
         
-        if api_key_input:
-            # Update the intelligent verifier with new API key
-            if api_key_input != api_key:
+        if api_key_input and st.button("✅ Connect Claude", key="connect_claude"):
+            try:
+                # Save to session state
+                st.session_state.ai_provider = 'claude'
+                st.session_state.ai_api_key = api_key_input
+                st.session_state.use_ai = True
+                
+                # Reinitialize with new settings
+                intelligent_verifier.ai_provider = 'claude'
                 intelligent_verifier.api_key = api_key_input
-                intelligent_verifier.client = None
-                try:
-                    from anthropic import Anthropic
-                    intelligent_verifier.client = Anthropic(api_key=api_key_input)
-                    intelligent_verifier.use_ai = True
+                intelligent_verifier._initialize_ai()
+                
+                if intelligent_verifier.use_ai:
                     st.success("✅ Claude API connected!")
-                except:
-                    st.error("❌ Invalid API key")
-                    intelligent_verifier.use_ai = False
+                    st.rerun()
+                else:
+                    st.error("❌ Failed to connect")
+            except Exception as e:
+                st.error(f"❌ Error: {e}")
         
-        if intelligent_verifier.use_ai:
-            st.success("🤖 AI Mode: **ACTIVE**", icon="✨")
-        else:
-            st.info("🚫 AI Mode: **Inactive** - Using rules only", icon="ℹ️")
-        
-        # Cost info
-        st.caption("""
-        💰 **Cost:** ~$0.003 per verification (very affordable)
-        🔒 **Privacy:** Sent to Anthropic API
-        ⚡ **Speed:** 1-2 seconds per verification
+        if intelligent_verifier.use_ai and intelligent_verifier.ai_provider == 'claude':
+            st.success("🤖 Claude Mode: **ACTIVE**")
+    
+    with st.expander("🔍 Google Gemini (Global, Free Tier)", expanded=False):
+        st.markdown("""
+        **Setup:**
+        - Get free API key from https://ai.google.dev
+        - Install: `pip install google-generativeai`
         """)
+        
+        gemini_key = st.text_input(
+            "Gemini API Key",
+            type="password",
+            placeholder="Enter your Gemini API key",
+            key="api_key_gemini"
+        )
+        
+        if gemini_key and st.button("✅ Connect Gemini", key="connect_gemini"):
+            try:
+                # Save to session state
+                st.session_state.ai_provider = 'gemini'
+                st.session_state.ai_api_key = gemini_key
+                st.session_state.use_ai = True
+                
+                # Reinitialize with new settings
+                intelligent_verifier.ai_provider = 'gemini'
+                intelligent_verifier.api_key = gemini_key
+                intelligent_verifier._initialize_ai()
+                
+                if intelligent_verifier.use_ai:
+                    st.success("✅ Gemini API connected!")
+                    st.rerun()
+                else:
+                    st.error("❌ Failed to connect")
+            except Exception as e:
+                st.error(f"❌ Error: {e}")
+        
+        if intelligent_verifier.use_ai and intelligent_verifier.ai_provider == 'gemini':
+            st.success("🤖 Gemini Mode: **ACTIVE**")
+    
+    # Status display
+    st.divider()
+    col1, col2 = st.columns(2)
+    with col1:
+        if intelligent_verifier.use_ai:
+            mode = intelligent_verifier.ai_provider.upper()
+            st.success(f"🤖 AI Mode: **{mode}**")
+        else:
+            st.info("📋 Mode: **Rules Only**")
+    
+    with col2:
+        st.caption(f"Status: {'Connected ✅' if intelligent_verifier.use_ai else 'Offline (Rules only)'}")
 
 # Main interface
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Single Entry", "Batch Upload", "Results", "Rules Management", "Example Wordings"])
@@ -454,6 +604,17 @@ with tab1:
     
     if st.button("🔍 Verify", key="verify_single", use_container_width=True):
         if wording:
+            # Sync verifier with session state
+            sync_verifier_with_session()
+            
+            # Debug - show AI status
+            with st.expander("🔍 Debug Info", expanded=False):
+                st.write(f"**Session AI Provider:** {st.session_state.ai_provider}")
+                st.write(f"**Session Use AI:** {st.session_state.use_ai}")
+                st.write(f"**Verifier AI Provider:** {intelligent_verifier.ai_provider}")
+                st.write(f"**Verifier Use AI:** {intelligent_verifier.use_ai}")
+                st.write(f"**Verifier API Key Set:** {bool(intelligent_verifier.api_key)}")
+            
             # Use intelligent verification (rules + optional AI)
             result = intelligent_verifier.verify_intelligent(
                 category, 
@@ -463,6 +624,16 @@ with tab1:
             )
             
             st.markdown("### Results")
+            
+            # Debug - show result
+            with st.expander("🔍 Verification Result Debug", expanded=False):
+                st.json({
+                    'rule_status': result['rule_status'],
+                    'ai_used': result['ai_used'],
+                    'ai_suggestion': result['ai_suggestion'],
+                    'ai_reason': result['ai_reason'],
+                    'confidence': result['confidence']
+                })
             
             # Status indicator
             col1, col2, col3, col4 = st.columns(4)
@@ -616,6 +787,9 @@ with tab2:
             st.dataframe(df.head(), use_container_width=True)
             
             if st.button("🔍 Verify All Entries", use_container_width=True):
+                # Sync verifier with session state
+                sync_verifier_with_session()
+                
                 results = []
                 progress_bar = st.progress(0)
                 status_text = st.empty()
