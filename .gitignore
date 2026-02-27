@@ -1,0 +1,7 @@
+# Large files
+*.exe
+*.dmg
+*.pkg
+*.msi
+*.zip
+*.tar.gz
