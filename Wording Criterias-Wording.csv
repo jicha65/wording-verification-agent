@@ -136,293 +136,293 @@ Status,General Task,Retry Available,Yes,N/A,No issues found
 Status,General Task,Download Pending,Yes,N/A,No issues found
 Status,General Task,Unconfirmed Status,Yes,N/A,No issues found
 Status,General Task,Wasted,Yes,N/A,No issues found
-Warning,Error message,An unexpected system error occurred. Please try again or contact support.,,,
-Warning,Error message,Authentication required. Please log in to continue.,,,
-Warning,Error message,Unable to read the file. Please check file permissions and try again.,,,
-Warning,Error message,The requested file does not exist. Please verify the file path.,,,
-Warning,Error message,The file is empty. Please provide a file with valid content.,,,
-Warning,Error message,File name is required. Please specify a valid file name.,,,
-Warning,Error message,Invalid file type. Please upload a supported file format.,,,
-Warning,Error message,The file contains no data. Please upload a file with valid content.,,,
-Warning,Error message,File size exceeds the maximum limit. Please upload a smaller file.,,,
-Warning,Error message,Invalid date format. Please use the correct date format (YYYY-MM-DD).,,,
-Warning,Error message,The provided data is invalid. Please check and correct the input.,,,
-Warning,Error message,Invalid parameter provided. Please check the request parameters.,,,
-Warning,Error message,The requested data does not exist in the system.,,,
-Warning,Error message,Failed to export Excel file. Please try again.,,,
-Warning,Error message,File download failed. Please check your connection and try again.,,,
-Warning,Error message,System verification failed. Please contact administrator.,,,
-Warning,Error message,An account with this ID already exists. Please use a different ID.,,,
-Warning,Error message,Password is required. Please enter a valid password.,,,
-Warning,Error message,Account not found. Please check the account ID and try again.,,,
-Warning,Error message,Account initialization failed. Please contact support.,,,
-Warning,Error message,Device category does not exist. Please verify the category ID.,,,
-Warning,Error message,Device category already exists. Please use a different name.,,,
-Warning,Error message,Scene type is out of valid range. Please select a valid scene type.,,,
-Warning,Error message,Device type is out of valid range. Please select a valid device type.,,,
-Warning,Error message,Invalid device category import type. Please check the import format.,,,
-Warning,Error message,Invalid scene type in device category import. Please correct the scene type.,,,
-Warning,Error message,BE type is out of valid range. Please select a valid BE type.,,,
-Warning,Error message,Invalid BE type in device category import. Please correct the BE type.,,,
-Warning,Error message,The KVS SIDE NUMBER can not be repeated,,,
-Warning,Error message,The KVS SIDE NAME can not be repeated,,,
-Warning,Error message,The KVS SIDE ABBR can not be repeated,,,
-Warning,Error message,The device type has been referenced by the store device and can not be modified or deleted,,,
-Warning,Error message,The device scene type does not match,,,
-Warning,Error message,Restaurant number already exists. Please use a unique Restaurant number.,,,
-Warning,Error message,Restaurant configuration does not exist. Please create the configuration first.,,,
-Warning,Error message,Store configuration is not the latest version. Please update to continue.,,,
-Warning,Error message,Store is inactive or does not exist. Please verify the store status.,,,
-Warning,Error message,Invalid batch configuration mode for the store. Please select a valid mode.,,,
-Warning,Error message,Store customize parameter templateId duplicated,,,
-Warning,Error message,The store does not exist or has Not been excluded for batch-publishing.,,,
-Warning,Error message,Store domain name information does not exist,,,
-Warning,Error message,Invalid store type,,,
-Warning,Error message,Store data take effect error,,,
-Warning,Error message,Store dispatcher operation error,,,
-Warning,Error message,Store data create snapshot error,,,
-Warning,Error message,RFM store sync closed,,,
-Warning,Error message,RFM store sync conflict,,,
-Warning,Error message,"The POS device already exists,the initialization is not supported.",,,
-Warning,Error message,"The KVS device already exists,the initialization is not supported.",,,
-Warning,Error message,The POS device of the target store does not exist and can not be copied.,,,
-Warning,Error message,The KVS device of the target store does not exist and can not be copied.,,,
-Warning,Error message,Single category pos size exceed the limit,,,
-Warning,Error message,Single category kvs size exceed the limit,,,
-Warning,Error message,The device name is duplicate,,,
-Warning,Error message,The device alias is duplicate,,,
-Warning,Error message,Invalid store device error,,,
-Warning,Error message,The POD of POS can not be empty.,,,
-Warning,Error message,The REM POD of POS can not be empty.,,,
-Warning,Error message,The device does not exist,,,
-Warning,Error message,The pos device name is illegal,,,
-Warning,Error message,The maximum and minimum ids of POS-CODE must exist at the same time,,,
-Warning,Error message,The minimum ID can not be greater than the maximum ID,,,
-Warning,Error message,POS-CODE is not within the given range,,,
-Warning,Error message,Only numbers ranging from 1 to 999 are supported,,,
-Warning,Error message,Only one type and side can be specified,,,
-Warning,Error message,There can only be one default option,,,
-Warning,Error message,Publish task RPC exception,,,
-Warning,Error message,The number of devices per POS type can not exceed 10,,,
-Warning,Error message,The device type is referenced by a routing rule and can not be modified or deleted,,,
-Warning,Error message,The device is referenced and can not be deleted,,,
-Warning,Error message,KVS scene type can not be empty.,,,
-Warning,Error message,Device category in the configuration data on the mirroring screen is invalid.,,,
-Warning,Error message,Device alias in the configuration data on the mirroring screen is invalid.,,,
-Warning,Error message,"The device has been updated in the configuration background of the restaurant, and the current restaurant has not yet been released, please go to the configuration background to verify and release it before further operation",,,
-Warning,Error message,The device should be connected with printer.,,,
-Warning,Error message,A maximum of one device can be configured for a meal.,,,
-Warning,Error message,The mirrored screen device can not be set to itself.,,,
-Warning,Error message,The device has been referenced as a printer and the scene type is not valid.,,,
-Warning,Error message,The PMIG does not exist,,,
-Warning,Error message,The PMIG is occupied by routing rules and can not be deleted.,,,
-Warning,Error message,The PMIG already exists and can not be saved.,,,
-Warning,Error message,The source does not exist.,,,
-Warning,Error message,The source already exists.,,,
-Warning,Error message,The Source is occupied by routing rules and can not be deleted.,,,
-Warning,Error message,Template name already exists,,,
-Warning,Error message,Template is not exist,,,
-Warning,Error message,"Template is used,can not delete or disable",,,
-Warning,Error message,The template can not be disassociated. Please re-enter to get the latest data.,,,
-Warning,Error message,The template has not been referenced and can not be published,,,
-Warning,Error message,There is tenderCode in the Tender template that does not maintain the underlying property Settings:[%s],,,
-Warning,Error message,Route is not exist,,,
-Warning,Error message,Routing rule type is abnormal,,,
-Warning,Error message,The name of the routing rule is repeated,,,
-Warning,Error message,There is an overlap in the detailed configuration of routing rules,,,
-Warning,Error message,The routing rule is already in use and can not be deleted or disabled,,,
-Warning,Error message,The routing device is missing a cascading device,,,
-Warning,Error message,The routing device category does not match,,,
-Warning,Error message,The routing standby is not legitimate,,,
-Warning,Error message,The routing cascade device is not legitimate,,,
-Warning,Error message,The balanced strategy is not legal,,,
-Warning,Error message,The take meal method is not legal,,,
-Warning,Error message,The FOE does not exist,,,
-Warning,Error message,"The input parameters foename, pod and rempod can not be combined and repeated",,,
-Warning,Error message,"The input parameters foe number, pod and rempod can not be combined and repeated",,,
-Warning,Error message,The FOE is occupied by pos groups and can not be deleted.,,,
-Warning,Error message,Publish task is not exist,,,
-Warning,Error message,Publish task is not waiting,,,
-Warning,Error message,Publish task is being processed,,,
-Warning,Error message,Release tasks are not pending or scheduled tasks,,,
-Warning,Error message,The time query parameter is abnormal,,,
-Warning,Error message,Tasks that fail to be pushed are not allowed to download configurations,,,
-Warning,Error message,Publishing a task is not a publishing failure,,,
-Warning,Error message,The release task did not fail to publish stores,,,
-Warning,Error message,The release task details do not exist,,,
-Warning,Error message,The push content of the publish task is empty,,,
-Warning,Error message,Store configuration publish verification failed,,,
-Warning,Error message,The promotion activity is not exist,,,
-Warning,Error message,The promotion activity is used and can not delete,,,
-Warning,Error message,The discount ratio can not be empty,,,
-Warning,Error message,The reduce amount can not be empty,,,
-Warning,Error message,"Promotion number, promotion name in Chinese and English can not be repeated",,,
-Warning,Error message,"There is a free activity in the current valid period, please select a new time",,,
-Warning,Error message,"If the promotion type is Discount, the discount type can not be empty",,,
-Warning,Error message,The parameter category doesn't exist,,,
-Warning,Error message,The parameter category exists.,,,
-Warning,Error message,The parameter subCategory exists.,,,
-Warning,Error message,The parameter sub-category doesn't exist.,,,
-Warning,Error message,The parameter category is not associated with parameter subCategory,,,
-Warning,Error message,The parameter subtype is referenced and can not be deleted.,,,
-Warning,Error message,The system parameter already exists,,,
-Warning,Error message,The system parameter is duplicated,,,
-Warning,Error message,The system parameter does not exist.,,,
-Warning,Error message,The content of the uploaded file is blank for the store layout settings,,,
-Warning,Error message,The file uploaded for store layout settings is not Excel,,,
-Warning,Error message,"%s%s page, the button id is duplicated",,,
-Warning,Error message,There are duplicate records in the import task,,,
-Warning,Error message,The configuration information does not exist,,,
-Warning,Error message,The Task does not exist,,,
-Warning,Error message,The task does not allow cancellation,,,
-Warning,Error message,Task cancellation failed,,,
-Warning,Error message,Task back URL is empty,,,
-Warning,Error message,Task report fail,,,
-Warning,Error message,The unique printer code referenced by the printer configuration does not exist,,,
-Warning,Error message,The printer is quoted by pos or kvs and can not be deleted.,,,
-Warning,Error message,The printer name is duplicated and can not be saved.,,,
-Warning,Error message,The printer code is duplicated and can not be saved.,,,
-Warning,Error message,"If a backup printer is configured, the corresponding primary printer must also be configured.",,,
-Warning,Error message,Printer can not be repeated.,,,
-Warning,Error message,The network printers connected by the primary and backup printers are the same.,,,
-Warning,Error message,Unified Data Management Processor (DCP) adaptation failed,,,
-Warning,Error message,The file uploaded by Unified Data Management is empty,,,
-Warning,Error message,The specified data information for centralized management does not exist,,,
-Warning,Error message,Unified Data Management downloads are exceptional,,,
-Warning,Error message,The reporting time of the unified data is empty,,,
-Warning,Error message,Failed to upload unified files,,,
-Warning,Error message,The unified data query time is null,,,
-Warning,Error message,Uniform file report KVS Restaurant number is empty,,,
-Warning,Error message,The unified file reported KVS data as empty,,,
-Warning,Error message,File does not exist in current store,,,
-Warning,Error message,Uniform file download failed,,,
-Warning,Error message,Unified file compression failed,,,
-Warning,Error message,Uniform file upload file address is empty,,,
-Warning,Error message,The specified file on the COS file server does not exist,,,
-Warning,Error message,Oss upload error,,,
-Warning,Error message,Abnormal oss file server,,,
-Warning,Error message,COS file client exception,,,
-Warning,Error message,"The tag already exists, please rename it",,,
-Warning,Error message,No tag information to be deleted is detected,,,
-Warning,Error message,Store tag does not exist,,,
-Warning,Error message,The tag has been associated with the restaurant and can not be deleted,,,
-Warning,Error message,The query num is out of range,,,
-Warning,Error message,The Restaurant number is empty,,,
-Warning,Error message,Query store information according to Restaurant number %s is empty,,,
-Warning,Error message,"Restaurant network exception, please try again later",,,
-Warning,Error message,"Store service exception, not download",,,
-Warning,Error message,"Store device offline, not download",,,
-Warning,Error message,The FOE configuration information of the store BE does not exist,,,
-Warning,Error message,"The IP format of the store BE's FOE configuration is incorrect. Please confirm that the IP information separator of DMB uses an English semicolon, and the IP and port separator is an English colon",,,
-Warning,Error message,The request for SCT triggers an abnormal device inspection due to the following reasons:,,,
-Warning,Error message,The request SCT menu inspection is abnormal. The reason is: %s,,,
-Warning,Error message,Request SCT store menu to inspect too many stores,,,
-Warning,Error message,The requested file information does not exist,,,
-Warning,Error message,The file download processor failed to adapt,,,
-Warning,Error message,The amount of exported data exceeds the maximum limit,,,
-Warning,Error message,The file download instructions are empty,,,
-Warning,Error message,The file download name is empty,,,
-Warning,Error message,"Download file, file type does not match",,,
-Warning,Error message,The name of the receipt template must be unique,,,
-Warning,Error message,The receipt template does not exist,,,
-Warning,Error message,The receipt template has been applied by the restaurant template set and can't be deleted,,,
-Warning,Error message,Publish to dispatcher error,,,
-Warning,Error message,Get tender information error,,,
-Warning,Error message,Get product set information error,,,
-Warning,Error message,Get product material information error,,,
-Warning,Error message,Sync store pay channel auth error,,,
-Warning,Error message,The payment channel has changed. Please re-authorize.,,,
-Warning,Error message,Data format validation error.,,,
-Warning,Error message,Audit record not found,,,
-Warning,Error message,Audit status abnormal,,,
-Warning,Error message,Please go to audit the existed device task first,,,
-Warning,Error message,"Audit reject,the auditComments can not be null",,,
-Warning,Error message,The current information has not changed and does not need to be submitted for audit,,,
-Warning,Error message,"Store has tasks to be publish,please publish or cancel them first",,,
-Warning,Error message,"The restaurant is Inactive, Please go to submit and audit the restaurant first.",,,
-Warning,Error message,TimeBlockValue can not be empty,,,
-Warning,Error message,Please add media for the content,,,
-Warning,Error message,Content does not exist,,,
-Warning,Error message,The content has no applied restaurant. Please check and reselect a restaurant before taking effect.,,,
-Warning,Error message,The title length is illegal,,,
-Warning,Error message,The Start time can not be later than the end time,,,
-Warning,Error message,The Current content has ended and can not be published,,,
-Warning,Error message,Content can not add deleted media. Please update first,,,
-Warning,Error message,Please add restaurants for content,,,
-Warning,Error message,ContentCode is null,,,
-Warning,Error message,Media is not exit or be deleted,,,
-Warning,Error message,Please add media for position,,,
-Warning,Error message,Daypart value/timepart value can not null,,,
-Warning,Error message,Media mast be SOK position for timePart content,,,
-Warning,Error message,"Media type unsupported,please upload image or video",,,
-Warning,Error message,Media position illegal,,,
-Warning,Error message,Media position action can not be null,,,
-Warning,Error message,Media num exceed limit,,,
-Warning,Error message,Source is empty,,,
-Warning,Error message,Media tile is empty,,,
-Warning,Error message,Please upload media first,,,
-Warning,Error message,Please Select Restaurants First,,,
-Warning,Error message,Only CSO device can set jump Category,,,
-Warning,Error message,Navigation code over max,,,
-Warning,Error message,Navigation parentCode illegal,,,
-Warning,Error message,Belong to page illegal,,,
-Warning,Error message,Status illegal,,,
-Warning,Error message,Navigation code not exist,,,
-Warning,Error message,Navigation name length exceeds limit,,,
-Warning,Error message,Navigation name(En) length exceeds limit,,,
-Warning,Error message,S3 upload file error,,,
-Warning,Error message,Build store export info failed,,,
-Warning,Error message,Build pos and cso export info failed,,,
-Warning,Error message,Build kvs export info failed,,,
-Warning,Error message,"Channel code can not be empty, please fill in and save",,,
-Warning,Error message,"Channel name can not be empty, please fill in and save",,,
-Warning,Error message,Channel code should be between 2 and 20 characters long,,,
-Warning,Error message,Channel name should be between 2 and 50 characters long,,,
-Warning,Error message,"Eligible language can not be empty, please fill in and save",,,
-Warning,Error message,Channel code or name already exists,,,
-Warning,Error message,"Channel has been associated with source: %s, dissolve the relationship before modifying",,,
-Warning,Error message,The Channel does not exist,,,
-Warning,Error message,Please Select correct ruleType,,,
-Warning,Error message,Please set the specified rule for content before publish,,,
-Warning,Error message,RuleName duplicate,,,
-Warning,Error message,"Rule contains no store, please reset rule",,,
-Warning,Error message,Rule number exceed limit,,,
-Warning,Error message,FIFO routing config error,,,
-Warning,Error message,The configuration of the level device or cascading device is illegal,,,
-Warning,Error message,Channel code must be all numeric,,,
-Warning,Error message,Store channel publish fail,,,
-Warning,Error message,Sync price tier info error,,,
-Warning,Error message,Sync day part info error,,,
-Warning,Error message,Sync template info error,,,
-Warning,Error message,Sync store tag info error,,,
-Warning,Error message,Query temporary info failed,,,
-Warning,Error message,The Company number or name already exists,,,
-Warning,Error message,The Company does not exist,,,
-Warning,Error message,Get all active restaurant fails,,,
-Warning,Error message,Restaurant search failed,,,
-Warning,Error message,Navigation name can not be null,,,
-Warning,Error message,The navigation name can not be repeated,,,
-Warning,Error message,Market field can not be empty,,,
-Warning,Error message,The Media position can not be updated,,,
-Warning,Error message,Please reduce the product number for media,,,
-Warning,Error message,Please reduce the media number for the once save request,,,
-Warning,Error message,One Restaurant can not be both in the allowlist and the blocklist,,,
-Warning,Error message,"The Media has been linked to content, so it can not be deleted",,,
-Warning,Error message,Position code duplicate,,,
-Warning,Error message,At least two media bind to the CSO quick access position,,,
-Warning,Error message,Position source duplicate,,,
-Warning,Error message,No new edit content needs to be published,,,
-Warning,Error message,Get export store data from the query service.,,,
-Warning,Error message,Data serialization error,,,
-Warning,Error message,Data deserialization error,,,
-Warning,Error message,The number of imported stores has exceeded the maximum limit.,,,
-Warning,Error message,Batch-imported restaurant numbers contain non-existent ones: %s,,,
-Warning,Error message,"[row: %d, restaurant number: %s]: field %s is wrong",,,
-Warning,Error message,"[row: %d, restaurant number: %s]: an unknown error has occurred. Please carefully check the imported file against the template",,,
-Warning,Error message,"Restaurant Number %s can?�?t update right now, they have in-progress audits or to be published tasks.",,,
-Warning,Error message,Import file contains duplicate store code %s,,,
-Warning,Error message,"[row: %d, restaurant number: %s]: when do not support table service, table service daypart must be empty",,,
-Warning,Error message,"[row: %d, restaurant number: %s]: when support table service, table service daypart can not be empty",,,
-Warning,Error message,"Query validate set error, please try again later",,,
-Warning,Error message,Sync route info error,,,
-Warning,Error message,Sync foe info error,,,
+Warning,Error message,An unexpected system error occurred. Please try again or contact support.,Yes,N/A,No issues found
+Warning,Error message,Authentication required. Please log in to continue.,Yes,N/A,No issues found
+Warning,Error message,Unable to read the file. Please check file permissions and try again.,Yes,N/A,No issues found
+Warning,Error message,The requested file does not exist. Please verify the file path.,Yes,N/A,No issues found
+Warning,Error message,The file is empty. Please provide a file with valid content.,Yes,N/A,No issues found
+Warning,Error message,File name is required. Please specify a valid file name.,Yes,N/A,No issues found
+Warning,Error message,Invalid file type. Please upload a supported file format.,Yes,N/A,No issues found
+Warning,Error message,The file contains no data. Please upload a file with valid content.,No,report,"Vague term, use specific alternative"
+Warning,Error message,File size exceeds the maximum limit. Please upload a smaller file.,Yes,N/A,No issues found
+Warning,Error message,Invalid date format. Please use the correct date format (YYYY-MM-DD).,Yes,N/A,No issues found
+Warning,Error message,The provided data is invalid. Please check and correct the input.,No,report,"Vague term, use specific alternative"
+Warning,Error message,Invalid parameter provided. Please check the request parameters.,Yes,N/A,No issues found
+Warning,Error message,The requested data does not exist in the system.,No,report,"Vague term, use specific alternative"
+Warning,Error message,Failed to export Excel file. Please try again.,Yes,N/A,No issues found
+Warning,Error message,File download failed. Please check your connection and try again.,Yes,N/A,No issues found
+Warning,Error message,System verification failed. Please contact administrator.,Yes,N/A,No issues found
+Warning,Error message,An account with this ID already exists. Please use a different ID.,Yes,N/A,No issues found
+Warning,Error message,Password is required. Please enter a valid password.,Yes,N/A,No issues found
+Warning,Error message,Account not found. Please check the account ID and try again.,Yes,N/A,No issues found
+Warning,Error message,Account initialization failed. Please contact support.,Yes,N/A,No issues found
+Warning,Error message,Device category does not exist. Please verify the category ID.,Yes,N/A,No issues found
+Warning,Error message,Device category already exists. Please use a different name.,Yes,N/A,No issues found
+Warning,Error message,Scene type is out of valid range. Please select a valid scene type.,Yes,N/A,No issues found
+Warning,Error message,Device type is out of valid range. Please select a valid device type.,Yes,N/A,No issues found
+Warning,Error message,Invalid device category import type. Please check the import format.,Yes,N/A,No issues found
+Warning,Error message,Invalid scene type in device category import. Please correct the scene type.,Yes,N/A,No issues found
+Warning,Error message,BE type is out of valid range. Please select a valid BE type.,Yes,N/A,No issues found
+Warning,Error message,Invalid BE type in device category import. Please correct the BE type.,Yes,N/A,No issues found
+Warning,Error message,The KVS SIDE NUMBER can not be repeated,Yes,N/A,No issues found
+Warning,Error message,The KVS SIDE NAME can not be repeated,Yes,N/A,No issues found
+Warning,Error message,The KVS SIDE ABBR can not be repeated,Yes,N/A,No issues found
+Warning,Error message,The device type has been referenced by the store device and can not be modified or deleted,Yes,N/A,No issues found
+Warning,Error message,The device scene type does not match,Yes,N/A,No issues found
+Warning,Error message,Restaurant number already exists. Please use a unique Restaurant number.,Yes,N/A,No issues found
+Warning,Error message,Restaurant configuration does not exist. Please create the configuration first.,Yes,N/A,No issues found
+Warning,Error message,Store configuration is not the latest version. Please update to continue.,Yes,N/A,No issues found
+Warning,Error message,Store is inactive or does not exist. Please verify the store status.,Yes,N/A,No issues found
+Warning,Error message,Invalid batch configuration mode for the store. Please select a valid mode.,Yes,N/A,No issues found
+Warning,Error message,Store customize parameter templateId duplicated,Yes,N/A,No issues found
+Warning,Error message,The store does not exist or has Not been excluded for batch-publishing.,Yes,N/A,No issues found
+Warning,Error message,Store domain name information does not exist,Yes,N/A,No issues found
+Warning,Error message,Invalid store type,Yes,N/A,No issues found
+Warning,Error message,Store data take effect error,No,report,"Vague term, use specific alternative"
+Warning,Error message,Store dispatcher operation error,Yes,N/A,No issues found
+Warning,Error message,Store data create snapshot error,No,report,"Vague term, use specific alternative"
+Warning,Error message,RFM store sync closed,Yes,N/A,No issues found
+Warning,Error message,RFM store sync conflict,Yes,N/A,No issues found
+Warning,Error message,"The POS device already exists,the initialization is not supported.",Yes,N/A,No issues found
+Warning,Error message,"The KVS device already exists,the initialization is not supported.",Yes,N/A,No issues found
+Warning,Error message,The POS device of the target store does not exist and can not be copied.,Yes,N/A,No issues found
+Warning,Error message,The KVS device of the target store does not exist and can not be copied.,Yes,N/A,No issues found
+Warning,Error message,Single category pos size exceed the limit,Yes,N/A,No issues found
+Warning,Error message,Single category kvs size exceed the limit,Yes,N/A,No issues found
+Warning,Error message,The device name is duplicate,Yes,N/A,No issues found
+Warning,Error message,The device alias is duplicate,Yes,N/A,No issues found
+Warning,Error message,Invalid store device error,Yes,N/A,No issues found
+Warning,Error message,The POD of POS can not be empty.,Yes,N/A,No issues found
+Warning,Error message,The REM POD of POS can not be empty.,Yes,N/A,No issues found
+Warning,Error message,The device does not exist,Yes,N/A,No issues found
+Warning,Error message,The pos device name is illegal,Yes,N/A,No issues found
+Warning,Error message,The maximum and minimum ids of POS-CODE must exist at the same time,Yes,N/A,No issues found
+Warning,Error message,The minimum ID can not be greater than the maximum ID,Yes,N/A,No issues found
+Warning,Error message,POS-CODE is not within the given range,Yes,N/A,No issues found
+Warning,Error message,Only numbers ranging from 1 to 999 are supported,Yes,N/A,No issues found
+Warning,Error message,Only one type and side can be specified,Yes,N/A,No issues found
+Warning,Error message,There can only be one default option,Yes,N/A,No issues found
+Warning,Error message,Publish task RPC exception,Yes,N/A,No issues found
+Warning,Error message,The number of devices per POS type can not exceed 10,Yes,N/A,No issues found
+Warning,Error message,The device type is referenced by a routing rule and can not be modified or deleted,Yes,N/A,No issues found
+Warning,Error message,The device is referenced and can not be deleted,Yes,N/A,No issues found
+Warning,Error message,KVS scene type can not be empty.,Yes,N/A,No issues found
+Warning,Error message,Device category in the configuration data on the mirroring screen is invalid.,No,report,"Vague term, use specific alternative"
+Warning,Error message,Device alias in the configuration data on the mirroring screen is invalid.,No,report,"Vague term, use specific alternative"
+Warning,Error message,"The device has been updated in the configuration background of the restaurant, and the current restaurant has not yet been released, please go to the configuration background to verify and release it before further operation",Yes,N/A,No issues found
+Warning,Error message,The device should be connected with printer.,Yes,N/A,No issues found
+Warning,Error message,A maximum of one device can be configured for a meal.,Yes,N/A,No issues found
+Warning,Error message,The mirrored screen device can not be set to itself.,Yes,N/A,No issues found
+Warning,Error message,The device has been referenced as a printer and the scene type is not valid.,Yes,N/A,No issues found
+Warning,Error message,The PMIG does not exist,Yes,N/A,No issues found
+Warning,Error message,The PMIG is occupied by routing rules and can not be deleted.,Yes,N/A,No issues found
+Warning,Error message,The PMIG already exists and can not be saved.,Yes,N/A,No issues found
+Warning,Error message,The source does not exist.,Yes,N/A,No issues found
+Warning,Error message,The source already exists.,Yes,N/A,No issues found
+Warning,Error message,The Source is occupied by routing rules and can not be deleted.,Yes,N/A,No issues found
+Warning,Error message,Template name already exists,Yes,N/A,No issues found
+Warning,Error message,Template is not exist,Yes,N/A,No issues found
+Warning,Error message,"Template is used,can not delete or disable",Yes,N/A,No issues found
+Warning,Error message,The template can not be disassociated. Please re-enter to get the latest data.,No,report,"Vague term, use specific alternative"
+Warning,Error message,The template has not been referenced and can not be published,Yes,N/A,No issues found
+Warning,Error message,There is tenderCode in the Tender template that does not maintain the underlying property Settings:[%s],Yes,N/A,No issues found
+Warning,Error message,Route is not exist,Yes,N/A,No issues found
+Warning,Error message,Routing rule type is abnormal,Yes,N/A,No issues found
+Warning,Error message,The name of the routing rule is repeated,Yes,N/A,No issues found
+Warning,Error message,There is an overlap in the detailed configuration of routing rules,Yes,N/A,No issues found
+Warning,Error message,The routing rule is already in use and can not be deleted or disabled,Yes,N/A,No issues found
+Warning,Error message,The routing device is missing a cascading device,Yes,N/A,No issues found
+Warning,Error message,The routing device category does not match,Yes,N/A,No issues found
+Warning,Error message,The routing standby is not legitimate,Yes,N/A,No issues found
+Warning,Error message,The routing cascade device is not legitimate,Yes,N/A,No issues found
+Warning,Error message,The balanced strategy is not legal,Yes,N/A,No issues found
+Warning,Error message,The take meal method is not legal,Yes,N/A,No issues found
+Warning,Error message,The FOE does not exist,Yes,N/A,No issues found
+Warning,Error message,"The input parameters foename, pod and rempod can not be combined and repeated",Yes,N/A,No issues found
+Warning,Error message,"The input parameters foe number, pod and rempod can not be combined and repeated",Yes,N/A,No issues found
+Warning,Error message,The FOE is occupied by pos groups and can not be deleted.,Yes,N/A,No issues found
+Warning,Error message,Publish task is not exist,Yes,N/A,No issues found
+Warning,Error message,Publish task is not waiting,Yes,N/A,No issues found
+Warning,Error message,Publish task is being processed,Yes,N/A,No issues found
+Warning,Error message,Release tasks are not pending or scheduled tasks,Yes,N/A,No issues found
+Warning,Error message,The time query parameter is abnormal,Yes,N/A,No issues found
+Warning,Error message,Tasks that fail to be pushed are not allowed to download configurations,Yes,N/A,No issues found
+Warning,Error message,Publishing a task is not a publishing failure,Yes,N/A,No issues found
+Warning,Error message,The release task did not fail to publish stores,Yes,N/A,No issues found
+Warning,Error message,The release task details do not exist,Yes,N/A,No issues found
+Warning,Error message,The push content of the publish task is empty,Yes,N/A,No issues found
+Warning,Error message,Store configuration publish verification failed,Yes,N/A,No issues found
+Warning,Error message,The promotion activity is not exist,Yes,N/A,No issues found
+Warning,Error message,The promotion activity is used and can not delete,Yes,N/A,No issues found
+Warning,Error message,The discount ratio can not be empty,Yes,N/A,No issues found
+Warning,Error message,The reduce amount can not be empty,Yes,N/A,No issues found
+Warning,Error message,"Promotion number, promotion name in Chinese and English can not be repeated",Yes,N/A,No issues found
+Warning,Error message,"There is a free activity in the current valid period, please select a new time",Yes,N/A,No issues found
+Warning,Error message,"If the promotion type is Discount, the discount type can not be empty",Yes,N/A,No issues found
+Warning,Error message,The parameter category doesn't exist,Yes,N/A,No issues found
+Warning,Error message,The parameter category exists.,Yes,N/A,No issues found
+Warning,Error message,The parameter subCategory exists.,Yes,N/A,No issues found
+Warning,Error message,The parameter sub-category doesn't exist.,Yes,N/A,No issues found
+Warning,Error message,The parameter category is not associated with parameter subCategory,Yes,N/A,No issues found
+Warning,Error message,The parameter subtype is referenced and can not be deleted.,Yes,N/A,No issues found
+Warning,Error message,The system parameter already exists,Yes,N/A,No issues found
+Warning,Error message,The system parameter is duplicated,Yes,N/A,No issues found
+Warning,Error message,The system parameter does not exist.,Yes,N/A,No issues found
+Warning,Error message,The content of the uploaded file is blank for the store layout settings,Yes,N/A,No issues found
+Warning,Error message,The file uploaded for store layout settings is not Excel,Yes,N/A,No issues found
+Warning,Error message,"%s%s page, the button id is duplicated",Yes,N/A,No issues found
+Warning,Error message,There are duplicate records in the import task,Yes,N/A,No issues found
+Warning,Error message,The configuration information does not exist,Yes,N/A,No issues found
+Warning,Error message,The Task does not exist,Yes,N/A,No issues found
+Warning,Error message,The task does not allow cancellation,Yes,N/A,No issues found
+Warning,Error message,Task cancellation failed,Yes,N/A,No issues found
+Warning,Error message,Task back URL is empty,Yes,N/A,No issues found
+Warning,Error message,Task report fail,Yes,N/A,No issues found
+Warning,Error message,The unique printer code referenced by the printer configuration does not exist,Yes,N/A,No issues found
+Warning,Error message,The printer is quoted by pos or kvs and can not be deleted.,Yes,N/A,No issues found
+Warning,Error message,The printer name is duplicated and can not be saved.,Yes,N/A,No issues found
+Warning,Error message,The printer code is duplicated and can not be saved.,Yes,N/A,No issues found
+Warning,Error message,"If a backup printer is configured, the corresponding primary printer must also be configured.",Yes,N/A,No issues found
+Warning,Error message,Printer can not be repeated.,Yes,N/A,No issues found
+Warning,Error message,The network printers connected by the primary and backup printers are the same.,Yes,N/A,No issues found
+Warning,Error message,Unified Data Management Processor (DCP) adaptation failed,No,report,"Vague term, use specific alternative"
+Warning,Error message,The file uploaded by Unified Data Management is empty,No,report,"Vague term, use specific alternative"
+Warning,Error message,The specified data information for centralized management does not exist,No,report,"Vague term, use specific alternative"
+Warning,Error message,Unified Data Management downloads are exceptional,No,report,"Vague term, use specific alternative"
+Warning,Error message,The reporting time of the unified data is empty,No,report,"Vague term, use specific alternative"
+Warning,Error message,Failed to upload unified files,Yes,N/A,No issues found
+Warning,Error message,The unified data query time is null,No,report,"Vague term, use specific alternative"
+Warning,Error message,Uniform file report KVS Restaurant number is empty,Yes,N/A,No issues found
+Warning,Error message,The unified file reported KVS data as empty,No,report,"Vague term, use specific alternative"
+Warning,Error message,File does not exist in current store,Yes,N/A,No issues found
+Warning,Error message,Uniform file download failed,Yes,N/A,No issues found
+Warning,Error message,Unified file compression failed,Yes,N/A,No issues found
+Warning,Error message,Uniform file upload file address is empty,Yes,N/A,No issues found
+Warning,Error message,The specified file on the COS file server does not exist,Yes,N/A,No issues found
+Warning,Error message,Oss upload error,Yes,N/A,No issues found
+Warning,Error message,Abnormal oss file server,Yes,N/A,No issues found
+Warning,Error message,COS file client exception,Yes,N/A,No issues found
+Warning,Error message,"The tag already exists, please rename it",Yes,N/A,No issues found
+Warning,Error message,No tag information to be deleted is detected,Yes,N/A,No issues found
+Warning,Error message,Store tag does not exist,Yes,N/A,No issues found
+Warning,Error message,The tag has been associated with the restaurant and can not be deleted,Yes,N/A,No issues found
+Warning,Error message,The query num is out of range,Yes,N/A,No issues found
+Warning,Error message,The Restaurant number is empty,Yes,N/A,No issues found
+Warning,Error message,Query store information according to Restaurant number %s is empty,Yes,N/A,No issues found
+Warning,Error message,"Restaurant network exception, please try again later",Yes,N/A,No issues found
+Warning,Error message,"Store service exception, not download",Yes,N/A,No issues found
+Warning,Error message,"Store device offline, not download",Yes,N/A,No issues found
+Warning,Error message,The FOE configuration information of the store BE does not exist,Yes,N/A,No issues found
+Warning,Error message,"The IP format of the store BE's FOE configuration is incorrect. Please confirm that the IP information separator of DMB uses an English semicolon, and the IP and port separator is an English colon",Yes,N/A,No issues found
+Warning,Error message,The request for SCT triggers an abnormal device inspection due to the following reasons:,Yes,N/A,No issues found
+Warning,Error message,The request SCT menu inspection is abnormal. The reason is: %s,Yes,N/A,No issues found
+Warning,Error message,Request SCT store menu to inspect too many stores,Yes,N/A,No issues found
+Warning,Error message,The requested file information does not exist,Yes,N/A,No issues found
+Warning,Error message,The file download processor failed to adapt,Yes,N/A,No issues found
+Warning,Error message,The amount of exported data exceeds the maximum limit,No,report,"Vague term, use specific alternative"
+Warning,Error message,The file download instructions are empty,Yes,N/A,No issues found
+Warning,Error message,The file download name is empty,Yes,N/A,No issues found
+Warning,Error message,"Download file, file type does not match",Yes,N/A,No issues found
+Warning,Error message,The name of the receipt template must be unique,Yes,N/A,No issues found
+Warning,Error message,The receipt template does not exist,Yes,N/A,No issues found
+Warning,Error message,The receipt template has been applied by the restaurant template set and can't be deleted,Yes,N/A,No issues found
+Warning,Error message,Publish to dispatcher error,Yes,N/A,No issues found
+Warning,Error message,Get tender information error,Yes,N/A,No issues found
+Warning,Error message,Get product set information error,Yes,N/A,No issues found
+Warning,Error message,Get product material information error,Yes,N/A,No issues found
+Warning,Error message,Sync store pay channel auth error,Yes,N/A,No issues found
+Warning,Error message,The payment channel has changed. Please re-authorize.,Yes,N/A,No issues found
+Warning,Error message,Data format validation error.,Yes,N/A,No issues found
+Warning,Error message,Audit record not found,Yes,N/A,No issues found
+Warning,Error message,Audit status abnormal,Yes,N/A,No issues found
+Warning,Error message,Please go to audit the existed device task first,Yes,N/A,No issues found
+Warning,Error message,"Audit reject,the auditComments can not be null",No,rejected,Typo detected
+Warning,Error message,The current information has not changed and does not need to be submitted for audit,Yes,N/A,No issues found
+Warning,Error message,"Store has tasks to be publish,please publish or cancel them first",Yes,N/A,No issues found
+Warning,Error message,"The restaurant is Inactive, Please go to submit and audit the restaurant first.",No,N/A,Comma splice error
+Warning,Error message,TimeBlockValue can not be empty,Yes,N/A,No issues found
+Warning,Error message,Please add media for the content,Yes,N/A,No issues found
+Warning,Error message,Content does not exist,Yes,N/A,No issues found
+Warning,Error message,The content has no applied restaurant. Please check and reselect a restaurant before taking effect.,Yes,N/A,No issues found
+Warning,Error message,The title length is illegal,Yes,N/A,No issues found
+Warning,Error message,The Start time can not be later than the end time,Yes,N/A,No issues found
+Warning,Error message,The Current content has ended and can not be published,Yes,N/A,No issues found
+Warning,Error message,Content can not add deleted media. Please update first,Yes,N/A,No issues found
+Warning,Error message,Please add restaurants for content,Yes,N/A,No issues found
+Warning,Error message,ContentCode is null,Yes,N/A,No issues found
+Warning,Error message,Media is not exit or be deleted,Yes,N/A,No issues found
+Warning,Error message,Please add media for position,Yes,N/A,No issues found
+Warning,Error message,Daypart value/timepart value can not null,Yes,N/A,No issues found
+Warning,Error message,Media mast be SOK position for timePart content,Yes,N/A,No issues found
+Warning,Error message,"Media type unsupported,please upload image or video",Yes,N/A,No issues found
+Warning,Error message,Media position illegal,Yes,N/A,No issues found
+Warning,Error message,Media position action can not be null,Yes,N/A,No issues found
+Warning,Error message,Media num exceed limit,Yes,N/A,No issues found
+Warning,Error message,Source is empty,Yes,N/A,No issues found
+Warning,Error message,Media tile is empty,Yes,N/A,No issues found
+Warning,Error message,Please upload media first,Yes,N/A,No issues found
+Warning,Error message,Please Select Restaurants First,Yes,N/A,No issues found
+Warning,Error message,Only CSO device can set jump Category,Yes,N/A,No issues found
+Warning,Error message,Navigation code over max,Yes,N/A,No issues found
+Warning,Error message,Navigation parentCode illegal,Yes,N/A,No issues found
+Warning,Error message,Belong to page illegal,Yes,N/A,No issues found
+Warning,Error message,Status illegal,Yes,N/A,No issues found
+Warning,Error message,Navigation code not exist,Yes,N/A,No issues found
+Warning,Error message,Navigation name length exceeds limit,Yes,N/A,No issues found
+Warning,Error message,Navigation name(En) length exceeds limit,Yes,N/A,No issues found
+Warning,Error message,S3 upload file error,Yes,N/A,No issues found
+Warning,Error message,Build store export info failed,Yes,N/A,No issues found
+Warning,Error message,Build pos and cso export info failed,Yes,N/A,No issues found
+Warning,Error message,Build kvs export info failed,Yes,N/A,No issues found
+Warning,Error message,"Channel code can not be empty, please fill in and save",Yes,N/A,No issues found
+Warning,Error message,"Channel name can not be empty, please fill in and save",Yes,N/A,No issues found
+Warning,Error message,Channel code should be between 2 and 20 characters long,Yes,N/A,No issues found
+Warning,Error message,Channel name should be between 2 and 50 characters long,Yes,N/A,No issues found
+Warning,Error message,"Eligible language can not be empty, please fill in and save",Yes,N/A,No issues found
+Warning,Error message,Channel code or name already exists,Yes,N/A,No issues found
+Warning,Error message,"Channel has been associated with source: %s, dissolve the relationship before modifying",Yes,N/A,No issues found
+Warning,Error message,The Channel does not exist,Yes,N/A,No issues found
+Warning,Error message,Please Select correct ruleType,Yes,N/A,No issues found
+Warning,Error message,Please set the specified rule for content before publish,Yes,N/A,No issues found
+Warning,Error message,RuleName duplicate,Yes,N/A,No issues found
+Warning,Error message,"Rule contains no store, please reset rule",Yes,N/A,No issues found
+Warning,Error message,Rule number exceed limit,Yes,N/A,No issues found
+Warning,Error message,FIFO routing config error,Yes,N/A,No issues found
+Warning,Error message,The configuration of the level device or cascading device is illegal,Yes,N/A,No issues found
+Warning,Error message,Channel code must be all numeric,Yes,N/A,No issues found
+Warning,Error message,Store channel publish fail,Yes,N/A,No issues found
+Warning,Error message,Sync price tier info error,Yes,N/A,No issues found
+Warning,Error message,Sync day part info error,Yes,N/A,No issues found
+Warning,Error message,Sync template info error,Yes,N/A,No issues found
+Warning,Error message,Sync store tag info error,Yes,N/A,No issues found
+Warning,Error message,Query temporary info failed,Yes,N/A,No issues found
+Warning,Error message,The Company number or name already exists,Yes,N/A,No issues found
+Warning,Error message,The Company does not exist,Yes,N/A,No issues found
+Warning,Error message,Get all active restaurant fails,Yes,N/A,No issues found
+Warning,Error message,Restaurant search failed,Yes,N/A,No issues found
+Warning,Error message,Navigation name can not be null,Yes,N/A,No issues found
+Warning,Error message,The navigation name can not be repeated,Yes,N/A,No issues found
+Warning,Error message,Market field can not be empty,Yes,N/A,No issues found
+Warning,Error message,The Media position can not be updated,Yes,N/A,No issues found
+Warning,Error message,Please reduce the product number for media,Yes,N/A,No issues found
+Warning,Error message,Please reduce the media number for the once save request,Yes,N/A,No issues found
+Warning,Error message,One Restaurant can not be both in the allowlist and the blocklist,Yes,N/A,No issues found
+Warning,Error message,"The Media has been linked to content, so it can not be deleted",Yes,N/A,No issues found
+Warning,Error message,Position code duplicate,Yes,N/A,No issues found
+Warning,Error message,At least two media bind to the CSO quick access position,Yes,N/A,No issues found
+Warning,Error message,Position source duplicate,Yes,N/A,No issues found
+Warning,Error message,No new edit content needs to be published,Yes,N/A,No issues found
+Warning,Error message,Get export store data from the query service.,No,report,"Vague term, use specific alternative"
+Warning,Error message,Data serialization error,Yes,N/A,No issues found
+Warning,Error message,Data deserialization error,Yes,N/A,No issues found
+Warning,Error message,The number of imported stores has exceeded the maximum limit.,Yes,N/A,No issues found
+Warning,Error message,Batch-imported restaurant numbers contain non-existent ones: %s,Yes,N/A,No issues found
+Warning,Error message,"[row: %d, restaurant number: %s]: field %s is wrong",Yes,N/A,No issues found
+Warning,Error message,"[row: %d, restaurant number: %s]: an unknown error has occurred. Please carefully check the imported file against the template",Yes,N/A,No issues found
+Warning,Error message,"Restaurant Number %s can?�?t update right now, they have in-progress audits or to be published tasks.",Yes,N/A,No issues found
+Warning,Error message,Import file contains duplicate store code %s,Yes,N/A,No issues found
+Warning,Error message,"[row: %d, restaurant number: %s]: when do not support table service, table service daypart must be empty",Yes,N/A,No issues found
+Warning,Error message,"[row: %d, restaurant number: %s]: when support table service, table service daypart can not be empty",Yes,N/A,No issues found
+Warning,Error message,"Query validate set error, please try again later",Yes,N/A,No issues found
+Warning,Error message,Sync route info error,Yes,N/A,No issues found
+Warning,Error message,Sync foe info error,Yes,N/A,No issues found
